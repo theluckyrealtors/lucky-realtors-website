@@ -6,7 +6,30 @@ FILES
 - config.js: paste the published Google Sheets CSV URL and WhatsApp number here
 - script.js: loads listings from the sheet and applies filters
 
-GOOGLE SHEETS COLUMNS (row 1, exact spelling)
+GOOGLE SHEETS COLUMNS (row 1, exact spelling)THE LUCKY REALTORS — luxury static website starter
+
+FILES
+- index.html: complete responsive frontend (HTML, CSS and JavaScript in one file)
+- Code.gs: Google Apps Script backend for registration/enquiries and property submissions
+
+GOOGLE SHEETS + APPROVAL SETUP
+1. Create a Google Sheet for your website inventory. Copy its spreadsheet ID from the URL between /d/ and /edit.
+2. Open Extensions > Apps Script. Replace the editor contents with Code.gs. Set SPREADSHEET_ID at the top to your spreadsheet ID.
+3. Save, select setupSheets from the function list, click Run, and authorize. This creates Listings and Enquiries tabs.
+4. Deploy > New deployment > select type Web app. Execute as: Me. Who has access: Anyone. Deploy and authorize. Copy the URL ending /exec.
+5. In index.html, find LUCKY_CONFIG and replace PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE with that /exec URL. Replace 919XXXXXXXXX with your WhatsApp number in international format, digits only.
+6. Upload index.html to your repository or static host and redeploy.
+7. New property submissions appear in Listings with Status = Pending. Review each submission yourself. Change Status to Approved only after you have verified it. Only rows marked Approved are returned by the public listings API. Do not expose the sheet itself as a public editable sheet.
+8. Registration and buyer requirements are saved in the private Enquiries tab. Keep the Google Sheet private.
+
+IMPORTANT LIMITATIONS / SAFETY
+- The registration modal is lead/enquiry registration, NOT secure user accounts or password-based login.
+- Anyone can submit a form to a public Apps Script web app; add spam protection and monitor submissions.
+- This simple backend accepts a public image URL, not direct image file uploads. Use photos you own or are licensed to use.
+- Sample properties in the HTML are demo data only. Replace/remove them before launch.
+- Do not collect passwords, identity documents, bank details or confidential property documents in these public forms.
+- GitHub Pages terms say the service is not intended for commercial business websites. You can store code in GitHub and deploy it to a suitable static host such as Netlify; check current terms/free-plan limits.
+
 ID | Title | Country | City | Type | Purpose | Price | Currency | Area | Unit | ImageURL | Status | Featured | Description | WhatsApp
 
 Country values: India or UAE (Dubai is also accepted by the location filter).
