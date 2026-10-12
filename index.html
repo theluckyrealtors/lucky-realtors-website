@@ -55,32 +55,3 @@ function openModal(id){$('#'+id).classList.add('open');document.body.style.overf
 async function submitForm(form){const kind=form.dataset.form;const result=form.querySelector('.form-result');const payload=Object.fromEntries(new FormData(form).entries());payload.formType=kind;payload.submittedAt=new Date().toISOString();if(!apiReady()){result.innerHTML='<p class="notice">Setup needed: connect the Google Apps Script Web App URL in LUCKY_CONFIG before submissions can be saved. For now, you can contact us by WhatsApp.</p><a class="btn small" target="_blank" rel="noopener" href="'+waLink('Website enquiry ('+kind+'):\n'+Object.entries(payload).map(([k,v])=>k+': '+v).join('\n'))+'">Send details by WhatsApp ↗</a>';return}const btn=form.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Sending…';try{const r=await fetch(LUCKY_CONFIG.apiUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});const data=await r.json();if(!data.ok)throw Error(data.message||'Submission failed');result.innerHTML='<p class="notice">'+(kind==='property'?'Thank you. Your property has been submitted for review and will not appear until approved.':'Thank you. Your details have been submitted successfully.')+'</p>';form.reset()}catch(e){result.innerHTML='<p class="notice">We could not save this form just now. Please send your enquiry via WhatsApp instead.</p><a class="btn small" target="_blank" rel="noopener" href="'+waLink('Website enquiry ('+kind+'):\n'+Object.entries(payload).map(([k,v])=>k+': '+v).join('\n'))+'">Continue on WhatsApp ↗</a>'}finally{btn.disabled=false;btn.textContent=kind==='property'?'Send for approval ↗':kind==='requirement'?'Send requirement ↗':'Submit registration ↗'}}
 $$('form[data-form]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();submitForm(f)}));loadProperties();
 </script></body></html>
-
-<body>
-  <div class="topline">INDIA · DUBAI <span>PROPERTY. WITH POSSIBILITY.</span></div>
-  <header class="site-header">
-    <a class="brand" href="#home" aria-label="The Lucky Realtors home"><span class="brand-mark">L</span><span class="brand-name">THE LUCKY <b>REALTORS</b><small>REAL ESTATE · INDIA & DUBAI</small></span></a>
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
-    <nav id="mainNav"><a href="#properties">Properties</a><a href="#about">About Us</a><a href="#landowners">Landowners & JV</a><a class="nav-cta" href="#contact">Enquire Now</a></nav>
-  </header>
-  <main>
-    <section class="hero" id="home">
-      <div class="hero-overlay"></div><div class="hero-content">
-        <p class="eyebrow">A MORE CONSIDERED WAY TO INVEST</p>
-        <h1>Find a place for<br><em>your next chapter.</em></h1>
-        <p class="hero-copy">Exceptional land, distinctive homes and strategic real estate across India and Dubai.</p>
-        <a class="gold-button" href="#properties">EXPLORE PROPERTIES <span>↗</span></a>
-      </div><div class="hero-note">CURATED OPPORTUNITIES<br><span>LAND · RESIDENTIAL · COMMERCIAL</span></div>
-    </section>
-    <section class="intro section" id="about"><div class="section-label">01 / OUR APPROACH</div><div><h2>Real estate is more<br>than <em>a transaction.</em></h2><p class="intro-copy">We connect people with considered property opportunities—from land and development parcels in India to residential and investment real estate in Dubai. Tell us what you’re looking for, and let’s start a conversation.</p></div></section>
-    <section class="listing-section section" id="properties"><div class="section-heading"><div><div class="section-label">02 / THE COLLECTION</div><h2>Explore <em>properties</em></h2></div><p>Opportunities chosen around your plans.</p></div>
-      <div class="filters"><label>LOCATION<select id="countryFilter"><option value="">All locations</option><option>India</option><option>UAE</option><option>Dubai</option></select></label><label>PROPERTY TYPE<select id="typeFilter"><option value="">All property types</option><option>Industrial</option><option>Villa</option><option>Apartment</option><option>R - Zone</option><option>Agriculture</option><option>Commercial</option></select></label><label>AVAILABILITY<select id="statusFilter"><option value="Available">Available</option><option value="">All statuses</option><option>Under Offer</option><option>Sold</option></select></label></div>
-      <div id="listingStatus" class="listing-status" aria-live="polite">Loading curated properties…</div><div id="propertyGrid" class="property-grid"></div>
-      <p class="sheet-note">Property information is subject to confirmation. Please enquire for current availability and terms.</p>
-    </section>
-    <section class="landowner section" id="landowners"><div><div class="section-label">03 / LANDOWNERS & PARTNERS</div><h2>Have land to sell<br>or a project to <em>unlock?</em></h2><p>We welcome direct-owner mandates, development proposals, joint ventures and select large-parcel opportunities in India and Dubai.</p><a class="outline-button" id="landownerLink" href="#contact">DISCUSS AN OPPORTUNITY ↗</a></div><div class="landowner-stamp">THE LUCKY<br><span>PARTNERSHIPS</span><br>REALTORS</div></section>
-    <section class="contact section" id="contact"><div><div class="section-label">04 / START A CONVERSATION</div><h2>Let’s find the<br><em>right opportunity.</em></h2><p>Share what you have in mind. We’ll take it from there.</p></div><div class="contact-actions"><a class="gold-button" id="contactWhatsApp" href="#" target="_blank" rel="noopener">CHAT ON WHATSAPP ↗</a><a class="email-link" href="mailto:suleman@theluckyrealtors.com">suleman@theluckyrealtors.com</a><p class="small-note">For listings, owner mandates, joint ventures and buyer enquiries.</p></div></section>
-  </main>
-  <footer><a class="footer-brand" href="#home">THE LUCKY REALTORS</a><span>INDIA · DUBAI</span><span>© <span id="year"></span> THE LUCKY REALTORS</span></footer>
-  <script src="config.js"></script><script src="script.js"></script>
-</body></html>
