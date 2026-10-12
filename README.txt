@@ -10,7 +10,7 @@ GOOGLE SHEETS COLUMNS (row 1, exact spelling)
 ID | Title | Country | City | Type | Purpose | Price | Currency | Area | Unit | ImageURL | Status | Featured | Description | WhatsApp
 
 Country values: India or UAE (Dubai is also accepted by the location filter).
-Type examples: Land, Plot, Villa, Apartment, Residential, Commercial, Office.
+Type examples: Agriculture, Villa, Apartment, Residential, Commercial, Office, Industrial.
 Status values: Available, Under Offer, Sold, Hidden.
 Featured values: Yes or No.
 ImageURL: direct HTTPS image URL. Use images you own or have permission to publish.
