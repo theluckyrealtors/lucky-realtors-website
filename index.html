@@ -76,10 +76,10 @@
     .board-card blockquote { font-style: italic; font-size: 12px; line-height: 1.6; color: var(--green2); background: #eae3d5; padding: 10px 12px; border-left: 3px solid var(--gold); margin: 0 0 12px 0; }
     .board-card p { font-size: 12px; color: #555; line-height: 1.7; margin: 0; }
 
-    .categories { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 28px; }
+    .categories { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 28px; }
     .category { height: 185px; position: relative; display: flex; align-items: end; padding: 18px; color: white; background-size: cover; background-position: center; }
     .category:before { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent, rgba(4,20,16,.82)); }
-    .category span { position: relative; font: 600 23px 'Cormorant Garamond', serif; }
+    .category span { position: relative; font: 600 20px 'Cormorant Garamond', serif; }
 
     .listing-wrap { background: #fffdf8; }
     .section-head { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: 28px; }
@@ -295,13 +295,14 @@
   <section class="section" id="categories">
     <div class="section-label">03 / EXPLORE BY COLLECTION</div>
     <h2>Property for <em>every ambition.</em></h2>
-    <p class="section-desc">Browse land, homes, and investment opportunities by purpose.</p>
+    <p class="section-desc">Browse land and investment opportunities by purpose.</p>
     <div class="categories">
-      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="Agriculture"><span>Agricultural Land</span></a>
-      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="Villa"><span>Luxury Villas</span></a>
-      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="Commercial"><span>Commercial</span></a>
-      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="Industrial"><span>Industrial Land</span></a>
-      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="Apartment"><span>Residences & Resorts</span></a>
+      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="Agriculture"><span>Agriculture</span></a>
+      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="R - Zone"><span>R - Zone</span></a>
+      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="Industrial"><span>Industrial</span></a>
+      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="NAINA"><span>NAINA</span></a>
+      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="JV Construction"><span>JV Construction</span></a>
+      <a class="category" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="JV Plotting"><span>JV Plotting</span></a>
     </div>
   </section>
 
@@ -329,13 +330,11 @@
         <select id="typeFilter">
           <option value="">All types</option>
           <option>Agriculture</option>
-          <option>Industrial</option>
           <option>R - Zone</option>
-          <option>Residential</option>
-          <option>Villa</option>
-          <option>Apartment</option>
-          <option>Commercial</option>
-          <option>JV Land</option>
+          <option>Industrial</option>
+          <option>NAINA</option>
+          <option>JV Construction</option>
+          <option>JV Plotting</option>
         </select>
       </label>
       <label>PURPOSE
@@ -367,7 +366,7 @@
       <div class="req-card">
         <small>01 / BUYERS</small>
         <h3>Find your property</h3>
-        <p>Land parcels, residential apartments, villas, and commercial investments in India & Dubai.</p>
+        <p>Land parcels, residential land, and commercial investments in India & Dubai.</p>
         <button class="btn small" data-modal="requirementModal">Post buyer requirement ↗</button>
       </div>
       <div class="req-card">
@@ -379,7 +378,7 @@
       <div class="req-card">
         <small>03 / INVESTORS</small>
         <h3>Explore a JV</h3>
-        <p>Joint ventures, development partnerships, resorts, and direct-owner deals.</p>
+        <p>Joint ventures, development partnerships, and direct-owner deals.</p>
         <button class="btn small" data-modal="requirementModal">Discuss a JV ↗</button>
       </div>
     </div>
@@ -507,13 +506,11 @@
       <label>Property type
         <select name="type">
           <option>Agriculture</option>
-          <option>Industrial</option>
           <option>R - Zone</option>
-          <option>Residential</option>
-          <option>Villa</option>
-          <option>Apartment</option>
-          <option>Commercial</option>
-          <option>JV Land</option>
+          <option>Industrial</option>
+          <option>NAINA</option>
+          <option>JV Construction</option>
+          <option>JV Plotting</option>
         </select>
       </label>
       <label>Purpose
@@ -549,13 +546,12 @@
       <label>Market / location<input name="location" required placeholder="e.g. Pune / Dubai"></label>
       <label>Property type
         <select name="type">
-          <option>Agricultural land</option>
-          <option>Industrial land</option>
-          <option>Residential</option>
-          <option>Villa</option>
-          <option>Commercial</option>
-          <option>Large land parcel</option>
-          <option>Joint venture</option>
+          <option>Agriculture</option>
+          <option>R - Zone</option>
+          <option>Industrial</option>
+          <option>NAINA</option>
+          <option>JV Construction</option>
+          <option>JV Plotting</option>
         </select>
       </label>
       <label>Budget<input name="budget" placeholder="Amount and currency"></label>
@@ -636,16 +632,20 @@
     }
 
     const country = $('#countryFilter').value.toLowerCase();
-    const type = $('#typeFilter').value.toLowerCase();
+    const type = $('#typeFilter').value.toLowerCase().replace(/[\s-]/g, '');
     const purpose = $('#purposeFilter').value.toLowerCase();
     const q = $('#searchFilter').value.toLowerCase().trim();
 
-    const filtered = properties.filter(p => 
-      (!country || String(p.country||'').toLowerCase().includes(country) || (country==='uae' && String(p.country||'').toLowerCase().includes('dubai'))) &&
-      (!type || String(p.type||'').toLowerCase() === type) &&
-      (!purpose || String(p.purpose||'').toLowerCase().includes(purpose)) &&
-      (!q || [p.title, p.city, p.country, p.description].join(' ').toLowerCase().includes(q))
-    );
+    const filtered = properties.filter(p => {
+      const pType = String(p.type || '').toLowerCase().replace(/[\s-]/g, '');
+      const pCountry = String(p.country || '').toLowerCase();
+      const pPurpose = String(p.purpose || '').toLowerCase();
+
+      return (!country || pCountry.includes(country) || (country === 'uae' && pCountry.includes('dubai'))) &&
+             (!type || pType === type || pType.includes(type) || type.includes(pType)) &&
+             (!purpose || pPurpose.includes(purpose)) &&
+             (!q || [p.title, p.city, p.country, p.description].join(' ').toLowerCase().includes(q));
+    });
 
     $('#propertyGrid').innerHTML = filtered.length 
       ? filtered.map(card).join('') 
