@@ -66,7 +66,7 @@
     .section h2 { font: 500 clamp(36px, 4vw, 55px)/1.05 'Cormorant Garamond', serif; margin: 15px 0 18px; }
     .intro p, .section-desc { color: #646960; line-height: 1.9; font-size: 14px; max-width: 730px; }
 
-    /* About & Board Section Styles (2-Column Grid) */
+    /* About & Board Section Styles (2-Column Layout) */
     .about-bg { background: #fffdf8; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .board-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 35px; }
     .board-card { background: var(--ivory); border: 1px solid var(--line); padding: 25px; transition: transform 0.2s ease; }
@@ -83,7 +83,7 @@
 
     .listing-wrap { background: #fffdf8; }
     .section-head { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: 28px; }
-    .filters { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 10px; padding: 17px; background: #f0ece2; border: 1px solid var(--line); margin-bottom: 25px; }
+    .filters { display: grid; grid-template-columns: repeat(4, 1fr) auto auto; gap: 10px; padding: 17px; background: #f0ece2; border: 1px solid var(--line); margin-bottom: 25px; }
     .filters label, .form label { display: block; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: #6f7168; text-transform: uppercase; }
     .filters select, .form input, .form select, .form textarea { width: 100%; margin-top: 8px; padding: 12px; border: 1px solid #d6d0c3; background: #fffefa; color: #222; outline-color: var(--gold); font-size: 12px; }
     
@@ -346,13 +346,14 @@
           <option>JV</option>
         </select>
       </label>
-      <label>SEARCH LOCATION
+      <label>SEARCH LOCATION (OPTIONAL)
         <input id="searchFilter" placeholder="City, area or title">
       </label>
-      <button class="btn dark" id="clearFilters">Reset</button>
+      <button class="btn dark" id="searchBtn" style="height:42px; margin-top:auto;">Search 🔍</button>
+      <button class="btn dark" id="clearFilters" style="height:42px; margin-top:auto;">Reset</button>
     </div>
 
-    <div class="status" id="listingStatus">Loading available properties…</div>
+    <div class="status" id="listingStatus">Select filters and click Search to view results.</div>
     <div class="property-grid" id="propertyGrid"></div>
     <p class="notice">Property photographs are illustrative until replaced with listing-specific images. All listing details are subject to verification.</p>
   </section>
@@ -576,12 +577,14 @@
   };
 
   const demoProperties = [
-    {id:'DEMO-01',title:'Agricultural Land Opportunity',country:'India',city:'Mulshi, Pune',type:'Agriculture',purpose:'Sale',price:'Enquire for price',area:'Example listing',unit:'',imageUrl:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=85',status:'Available',description:'Replace this sample with an approved property from your inventory.'},
-    {id:'DEMO-02',title:'Contemporary Luxury Villa',country:'Dubai',city:'Business Bay, Dubai',type:'Villa',purpose:'Sale',price:'Price on request',area:'Luxury residence',unit:'',imageUrl:'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=85',status:'Available',description:'Replace this sample with an approved property from your inventory.'},
-    {id:'DEMO-03',title:'Commercial Property Opportunity',country:'India',city:'Magarpatta, Pune',type:'Commercial',purpose:'Sale',price:'Enquire for price',area:'Commercial asset',unit:'',imageUrl:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85',status:'Available',description:'Replace this sample with an approved property from your inventory.'}
+    {id:'DEMO-01',title:'Agricultural Land Opportunity',country:'India',city:'Mulshi, Pune',type:'Agriculture',purpose:'Sale',price:'Enquire for price',area:'Example listing',unit:'',imageUrl:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=85',status:'Available',description:'Approved land parcel.'},
+    {id:'DEMO-02',title:'Contemporary Luxury Villa',country:'Dubai',city:'Business Bay, Dubai',type:'Villa',purpose:'Sale',price:'Price on request',area:'Luxury residence',unit:'',imageUrl:'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=85',status:'Available',description:'Approved luxury property.'},
+    {id:'DEMO-03',title:'Commercial Property Opportunity',country:'India',city:'Magarpatta, Pune',type:'Commercial',purpose:'Sale',price:'Enquire for price',area:'Commercial asset',unit:'',imageUrl:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85',status:'Available',description:'Approved commercial space.'}
   ];
   
   let properties = [];
+  let hasSearched = false;
+
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
   const apiReady = () => LUCKY_CONFIG.apiUrl.startsWith('https://script.google.com/macros/s/') && LUCKY_CONFIG.apiUrl.endsWith('/exec');
@@ -616,10 +619,16 @@
   }
 
   function render() {
+    if (!hasSearched) {
+      $('#propertyGrid').innerHTML = '<div class="empty">Please select your preferred filters above and click <strong>Search 🔍</strong> to view available properties.</div>';
+      $('#listingStatus').textContent = 'Select filters and click Search to view results.';
+      return;
+    }
+
     const country = $('#countryFilter').value.toLowerCase();
     const type = $('#typeFilter').value.toLowerCase();
     const purpose = $('#purposeFilter').value.toLowerCase();
-    const q = $('#searchFilter').value.toLowerCase();
+    const q = $('#searchFilter').value.toLowerCase().trim();
 
     const filtered = properties.filter(p => 
       (!country || String(p.country||'').toLowerCase().includes(country) || (country==='uae' && String(p.country||'').toLowerCase().includes('dubai'))) &&
@@ -630,16 +639,15 @@
 
     $('#propertyGrid').innerHTML = filtered.length 
       ? filtered.map(card).join('') 
-      : '<div class="empty">No matching approved properties found. <button class="btn small" data-modal="requirementModal">Post your requirement</button></div>';
+      : '<div class="empty">No matching approved properties found for your search criteria. <br><br><button class="btn small" data-modal="requirementModal">Post your requirement ↗</button></div>';
     
-    $('#listingStatus').textContent = `${filtered.length} ${filtered.length === 1 ? 'property' : 'properties'} shown · Only approved listings are displayed.`;
+    $('#listingStatus').textContent = `${filtered.length} ${filtered.length === 1 ? 'property' : 'properties'} found for your search.`;
     $$('[data-modal]').forEach(b => b.onclick = () => openModal(b.dataset.modal));
   }
 
   async function loadProperties() {
     if (!apiReady()) {
       properties = demoProperties;
-      $('#listingStatus').textContent = 'Preview mode: sample properties shown. Connect your Apps Script URL to load live listings.';
       render();
       return;
     }
@@ -667,14 +675,21 @@
   $('#menuBtn').onclick = () => $('#nav').classList.toggle('open');
   $('#nav').querySelectorAll('a').forEach(a => a.addEventListener('click', () => $('#nav').classList.remove('open')));
 
-  ['countryFilter', 'typeFilter', 'purposeFilter', 'searchFilter'].forEach(id => $('#' + id).addEventListener('input', render));
-  
+  $('#searchBtn').onclick = () => {
+    hasSearched = true;
+    render();
+  };
+
   $('#clearFilters').onclick = () => {
     $('#countryFilter').value = '';
     $('#typeFilter').value = '';
     $('#purposeFilter').value = '';
-    $('#searchFilter').value = ''; render(); };    $$('[data-type]').forEach(a => a.addEventListener('click', () => {
-    setTimeout(() => { $('#typeFilter').value = a.dataset.type; render(); }, 30);
+    $('#searchFilter').value = ''; hasSearched = false; render(); };    $$('[data-type]').forEach(a => a.addEventListener('click', () => {
+    setTimeout(() => { 
+      $('#typeFilter').value = a.dataset.type; 
+      hasSearched = true;
+      render(); 
+    }, 30);
   }));
 
   $('#year').textContent = new Date().getFullYear();
