@@ -66,9 +66,9 @@
     .section h2 { font: 500 clamp(36px, 4vw, 55px)/1.05 'Cormorant Garamond', serif; margin: 15px 0 18px; }
     .intro p, .section-desc { color: #646960; line-height: 1.9; font-size: 14px; max-width: 730px; }
 
-    /* About & Board Section Styles */
+    /* About & Board Section Styles (2-Column Grid) */
     .about-bg { background: #fffdf8; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .board-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 35px; }
+    .board-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 35px; }
     .board-card { background: var(--ivory); border: 1px solid var(--line); padding: 25px; transition: transform 0.2s ease; }
     .board-card:hover { transform: translateY(-3px); }
     .board-card h3 { font: 600 24px 'Cormorant Garamond', serif; margin: 0 0 4px; color: var(--green); }
@@ -245,13 +245,14 @@
     <h2>Two decades of <em>trusted expertise.</em></h2>
     <p class="section-desc">With over <strong>20+ years of industry experience</strong>, THE LUCKY REALTORS is a premier real estate advisory bridging key markets across India and Dubai. In India, we specialize in sourcing large and small land parcels. In Dubai, we provide curated residential apartments, luxury villas, and resort-style properties.</p>
     
-    <div class="board-card">
-  <img src="suleman.jpg" alt="Suleman Shaikh" style="width:100%; height:260px; object-fit:cover; border-radius:4px; margin-bottom:15px;">
-  <h3>Suleman Shaikh</h3>
-  <span class="board-role">Managing Director</span>
-  <blockquote>"Building lasting value starts with vision and total transparency in every transaction."</blockquote>
-  <p>Leads international property portfolios, driving brand expansion and strategic alliances across India and Dubai.</p>
-</div>
+    <div class="board-grid">
+      <div class="board-card">
+        <img src="suleman.jpg" alt="Suleman Shaikh" style="width:100%; height:320px; object-fit:cover; object-position: top center; border-radius:4px; margin-bottom:15px;">
+        <h3>Suleman Shaikh</h3>
+        <span class="board-role">Managing Director</span>
+        <blockquote>"Building lasting value starts with vision and total transparency in every transaction."</blockquote>
+        <p>Leads international property portfolios, driving brand expansion and strategic alliances across India and Dubai.</p>
+      </div>
 
       <div class="board-card">
         <h3>Mohemmad</h3>
@@ -514,7 +515,7 @@
           <option>JV Land</option>
         </select>
       </label>
-      <label>Purpose">
+      <label>Purpose
         <select name="purpose">
           <option>Sale</option>
           <option>Lease</option>
