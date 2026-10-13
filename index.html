@@ -44,6 +44,7 @@
     .btn.outline { background: transparent; color: var(--ivory); border-color: #9d895e; }
     .btn.dark { background: var(--green); color: var(--ivory); border-color: var(--green); }
     .btn.small { padding: 10px 13px; font-size: 10px; }
+    .btn.disabled { background: #888; border-color: #888; color: #fff; cursor: not-allowed; opacity: 0.7; }
     .menu { display: none; background: none; border: 0; font-size: 24px; cursor: pointer; }
 
     .hero { min-height: 590px; position: relative; display: flex; align-items: center; color: white; background: linear-gradient(90deg, rgba(8,29,24,.93), rgba(8,29,24,.66) 48%, rgba(8,29,24,.08)), url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=85') center/cover; }
@@ -66,7 +67,7 @@
     .section h2 { font: 500 clamp(36px, 4vw, 55px)/1.05 'Cormorant Garamond', serif; margin: 15px 0 18px; }
     .intro p, .section-desc { color: #646960; line-height: 1.9; font-size: 14px; max-width: 730px; }
 
-    /* About & Board Section Styles (2-Column Layout) */
+    /* About & Board Section Styles */
     .about-bg { background: #fffdf8; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .board-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 35px; }
     .board-card { background: var(--ivory); border: 1px solid var(--line); padding: 25px; transition: transform 0.2s ease; }
@@ -88,9 +89,10 @@
     .filters select, .form input, .form select, .form textarea { width: 100%; margin-top: 8px; padding: 12px; border: 1px solid #d6d0c3; background: #fffefa; color: #222; outline-color: var(--gold); font-size: 12px; }
     
     .property-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 19px; }
-    .property { border: 1px solid var(--line); background: white; min-width: 0; }
+    .property { border: 1px solid var(--line); background: white; min-width: 0; position: relative; }
     .property-img { height: 220px; position: relative; background: #d9d6ca center/cover; }
     .tag { position: absolute; top: 14px; left: 14px; background: var(--green); color: white; padding: 8px 10px; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+    .tag.sold-tag { background: #a82323; }
     .property-body { padding: 20px; }
     .property-body h3 { font: 600 26px/1.05 'Cormorant Garamond', serif; margin: 0 0 8px; }
     .place { font-size: 11px; color: var(--muted); }
@@ -315,7 +317,7 @@
       </div>
       <button class="btn dark" data-modal="submitModal">Submit a property +</button>
     </div>
-    <p class="section-desc">Only approved submissions appear in the public collection. Availability and details must be reconfirmed before a transaction.</p>
+    <p class="section-desc">Browse our portfolio of available and sold properties. Details and availability subject to reconfirmation.</p>
     
     <div class="filters">
       <label>COUNTRY / MARKET
@@ -579,6 +581,10 @@
   const $$ = s => [...document.querySelectorAll(s)];
   const apiReady = () => LUCKY_CONFIG.apiUrl.startsWith('https://script.google.com/macros/s/') && LUCKY_CONFIG.apiUrl.endsWith('/exec');
 
+  function normalize(str = '') {
+    return String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
   function getWaNumber(p) {
     if (p && p.whatsapp) {
       let cleaned = String(p.whatsapp).replace(/\D/g, '');
@@ -601,12 +607,21 @@
     const defaultImg = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80';
     const img = (p.imageurl && String(p.imageurl).startsWith('http')) ? p.imageurl : defaultImg;
     const targetWa = getWaNumber(p);
+    const isSold = normalize(p.status).includes('sold');
 
     const waMsg = `Hello THE LUCKY REALTORS,\n\nI am interested in the following property listing on your website:\n\n📌 Title: ${p.title || 'Property Opportunity'}\n📍 Location: ${p.city || ''}, ${p.country || ''}\n🏷️ Type: ${p.type || ''} (${p.purpose || 'Sale'})\n💰 Price: ${p.price || 'Price on request'}\n🆔 Property ID: ${p.id || 'N/A'}\n\nPlease share further details and schedule a discussion.`;
 
+    const btnHtml = isSold 
+      ? `<button class="btn disabled" disabled style="display:flex; align-items:center; justify-content:center; gap:8px;">
+           <span>🔒 Property Sold</span>
+         </button>`
+      : `<a class="btn dark" href="${waLink(waMsg, targetWa)}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:8px;">
+           <span>💬 Enquire on WhatsApp</span>
+         </a>`;
+
     return `<article class="property">
       <div class="property-img" style="background-image:url('${safe(img)}')">
-        <span class="tag">${safe(p.type || 'Property')}</span>
+        <span class="tag ${isSold ? 'sold-tag' : ''}">${isSold ? 'SOLD' : safe(p.type || 'Property')}</span>
       </div>
       <div class="property-body">
         <h3>${safe(p.title || 'Property opportunity')}</h3>
@@ -615,41 +630,37 @@
         <div class="meta">
           <span>${safe(p.area || 'Area on request')} ${safe(p.unit || '')}</span>
           <span>${safe(p.purpose || 'Sale')}</span>
-          <span>${safe(p.status || 'Available')}</span>
+          <span style="font-weight:700; color:${isSold ? '#a82323' : '#176b49'};">${isSold ? 'SOLD' : 'Available'}</span>
         </div>
-        <a class="btn dark" href="${waLink(waMsg, targetWa)}" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:8px;">
-          <span>💬 Enquire on WhatsApp</span>
-        </a>
+        ${btnHtml}
       </div>
     </article>`;
   }
 
   function render() {
     if (!hasSearched) {
-      $('#propertyGrid').innerHTML = '<div class="empty">Please select your preferred filters above and click <strong>Search 🔍</strong> to view available properties.</div>';
+      $('#propertyGrid').innerHTML = '<div class="empty">Please select your preferred filters above and click <strong>Search 🔍</strong> to view properties.</div>';
       $('#listingStatus').textContent = 'Select filters and click Search to view results.';
       return;
     }
 
-    const country = $('#countryFilter').value.toLowerCase();
-    const type = $('#typeFilter').value.toLowerCase().replace(/[\s-]/g, '');
-    const purpose = $('#purposeFilter').value.toLowerCase();
-    const q = $('#searchFilter').value.toLowerCase().trim();
+    const cNorm = normalize($('#countryFilter').value);
+    const tNorm = normalize($('#typeFilter').value);
+    const pNorm = normalize($('#purposeFilter').value);
+    const qNorm = normalize($('#searchFilter').value);
 
     const filtered = properties.filter(p => {
-      const pType = String(p.type || '').toLowerCase().replace(/[\s-]/g, '');
-      const pCountry = String(p.country || '').toLowerCase();
-      const pPurpose = String(p.purpose || '').toLowerCase();
+      const countryMatch = !cNorm || normalize(p.country).includes(cNorm) || (cNorm === 'uae' && normalize(p.country).includes('dubai'));
+      const typeMatch = !tNorm || normalize(p.type).includes(tNorm) || tNorm.includes(normalize(p.type));
+      const purposeMatch = !pNorm || normalize(p.purpose).includes(pNorm) || pNorm.includes(normalize(p.purpose));
+      const textMatch = !qNorm || [p.title, p.city, p.country, p.description].map(normalize).join(' ').includes(qNorm);
 
-      return (!country || pCountry.includes(country) || (country === 'uae' && pCountry.includes('dubai'))) &&
-             (!type || pType === type || pType.includes(type) || type.includes(pType)) &&
-             (!purpose || pPurpose.includes(purpose)) &&
-             (!q || [p.title, p.city, p.country, p.description].join(' ').toLowerCase().includes(q));
+      return countryMatch && typeMatch && purposeMatch && textMatch;
     });
 
     $('#propertyGrid').innerHTML = filtered.length 
       ? filtered.map(card).join('') 
-      : '<div class="empty">No matching available properties found for your search criteria. <br><br><button class="btn small" data-modal="requirementModal">Post your requirement ↗</button></div>';
+      : '<div class="empty">No properties found matching your search criteria.<br><br><button class="btn small" data-modal="requirementModal">Post your requirement ↗</button></div>';
     
     $('#listingStatus').textContent = `${filtered.length} ${filtered.length === 1 ? 'property' : 'properties'} found for your search.`;
     $$('[data-modal]').forEach(b => b.onclick = () => openModal(b.dataset.modal));
@@ -664,12 +675,12 @@
       const r = await fetch(LUCKY_CONFIG.apiUrl + '?action=listings', { cache: 'no-store' });
       if (!r.ok) throw Error('Could not load listings');
       const data = await r.json();
+      
+      // Include all non-empty properties (Available, Sold, Approved)
       properties = Array.isArray(data.properties) 
-        ? data.properties.filter(p => {
-            let st = String(p.status || '').toLowerCase().trim();
-            return st === 'available' || st === 'approved';
-          })
+        ? data.properties.filter(p => p.title || p.city || p.id)
         : [];
+      
       render();
     } catch(e) {
       properties = [];
