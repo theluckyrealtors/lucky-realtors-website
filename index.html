@@ -685,39 +685,98 @@
     } catch(e) {
       properties = [];
       render();
-      $('#listingStatus').textContent = 'Listings could not be loaded. Please try again later or contact us directly.';
+      if ($('#listingStatus')) {
+        $('#listingStatus').textContent = 'Listings could not be loaded. Please try again later or contact us directly.';
+      }
     }
   }
 
-  function openModal(id) { $('#' + id).classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeModals() { $$('.modal').forEach(m => m.classList.remove('open')); document.body.style.overflow = ''; }    $$('[data-modal]').forEach(b => b.addEventListener('click', () => openModal(b.dataset.modal)));
-  $$('[data-close]').forEach(b => b.addEventListener('click', closeModals));$$
-('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeModals(); }));
+  function openModal(id) { 
+    const m = $('#' + id);
+    if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  }
+
+  function closeModals() { 
+    $$('.modal').forEach(m => m.classList.remove('open')); 
+    document.body.style.overflow = ''; 
+  }
+
+  $$('[data-modal]').forEach(b => b.addEventListener('click', () => openModal(b.dataset.modal)));
+  $$('[data-close]').forEach(b => b.addEventListener('click', closeModals));
+  $$('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeModals(); }));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
 
-  $('#menuBtn').onclick = () => $('#nav').classList.toggle('open');
-  $('#nav').querySelectorAll('a').forEach(a => a.addEventListener('click', () => $('#nav').classList.remove('open')));
+  if ($('#menuBtn') && $('#nav')) {
+    $('#menuBtn').onclick = () => $('#nav').classList.toggle('open');
+    $('#nav').querySelectorAll('a').forEach(a => a.addEventListener('click', () => $('#nav').classList.remove('open')));
+  }
 
-  $('#searchBtn').onclick = () => {
-    hasSearched = true;
-    render();
-  };
+  if ($('#searchBtn')) {
+    $('#searchBtn').onclick = () => {
+      hasSearched = true;
+      render();
+    };
+  }
 
-  $('#clearFilters').onclick = () => {
-    $('#countryFilter').value = '';
-    $('#typeFilter').value = '';
-    $('#purposeFilter').value = '';
-    $('#searchFilter').value = ''; hasSearched = false; render(); };    $$('[data-type]').forEach(a => a.addEventListener('click', () => {
+  if ($('#clearFilters')) {
+    $('#clearFilters').onclick = () => {
+      if ($('#countryFilter')) $('#countryFilter').value = '';
+      if ($('#typeFilter')) $('#typeFilter').value = '';
+      if ($('#purposeFilter')) $('#purposeFilter').value = '';
+      if ($('#searchFilter')) $('#searchFilter').value = ''; 
+      hasSearched = false; 
+      render(); 
+    };
+  }
+
+  $$('[data-type]').forEach(a => a.addEventListener('click', () => {
     setTimeout(() => { 
-      $('#typeFilter').value = a.dataset.type; 
+      if ($('#typeFilter')) $('#typeFilter').value = a.dataset.type; 
       hasSearched = true;
       render(); 
     }, 30);
   }));
 
-  $('#year').textContent = new Date().getFullYear();
-  $('#mainWhatsApp').href = waLink('Hello THE LUCKY REALTORS, I would like to discuss a property enquiry.');
-  $('#floatWA').href = waLink('Hello THE LUCKY REALTORS, I have a property enquiry.');    async function submitForm(form) { const kind = form.dataset.form; const result = form.querySelector('.form-result'); const payload = Object.fromEntries(new FormData(form).entries()); payload.formType = kind; payload.submittedAt = new Date().toISOString();      if (!apiReady()) { result.innerHTML = '<p class="notice">Setup needed: connect Google Apps Script Web App URL in LUCKY_CONFIG. You can contact us directly via WhatsApp.</p><a class="btn small" target="_blank" rel="noopener" href="' + waLink('Website enquiry (' + kind + '):\n' + Object.entries(payload).map(([k,v]) => k + ': ' + v).join('\n')) + '">Send details by WhatsApp ↗</a>'; return; }      const btn = form.querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'Sending…';      try { const r = await fetch(LUCKY_CONFIG.apiUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }); const data = await r.json(); if (!data.ok) throw Error(data.message \vert{}\vert{} 'Submission failed'); result.innerHTML = '<p class="notice">' + (kind === 'property' ? 'Thank you. Your property has been submitted for review.' : 'Thank you. Your details have been submitted successfully.') + '</p>'; form.reset(); } catch(e) { result.innerHTML = '<p class="notice">We could not save this form. Please send your enquiry via WhatsApp.</p><a class="btn small" target="_blank" rel="noopener" href="' + waLink('Website enquiry (' + kind + '):\n' + Object.entries(payload).map(([k,v]) => k + ': ' + v).join('\n')) + '">Continue on WhatsApp ↗</a>'; } finally { btn.disabled = false; btn.textContent = kind === 'property' ? 'Send for approval ↗' : kind === 'requirement' ? 'Send requirement ↗' : 'Submit registration ↗'; } }    $$('form[data-form]').forEach(f => f.addEventListener('submit', e => { e.preventDefault(); submitForm(f); }));
+  if ($('#year')) $('#year').textContent = new Date().getFullYear();
+  if ($('#mainWhatsApp')) $('#mainWhatsApp').href = waLink('Hello THE LUCKY REALTORS, I would like to discuss a property enquiry.');
+  if ($('#floatWA')) $('#floatWA').href = waLink('Hello THE LUCKY REALTORS, I have a property enquiry.');
+
+  async function submitForm(form) { 
+    const kind = form.dataset.form; 
+    const result = form.querySelector('.form-result'); 
+    const payload = Object.fromEntries(new FormData(form).entries()); 
+    payload.formType = kind; 
+    payload.submittedAt = new Date().toISOString(); 
+
+    if (!apiReady()) { 
+      result.innerHTML = '<p class="notice">Setup needed: connect Google Apps Script Web App URL in LUCKY_CONFIG. You can contact us directly via WhatsApp.</p><a class="btn small" target="_blank" rel="noopener" href="' + waLink('Website enquiry (' + kind + '):\n' + Object.entries(payload).map(([k,v]) => k + ': ' + v).join('\n')) + '">Send details by WhatsApp ↗</a>'; 
+      return; 
+    } 
+
+    const btn = form.querySelector('button[type=submit]'); 
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+    try { 
+      const r = await fetch(LUCKY_CONFIG.apiUrl, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+        body: JSON.stringify(payload) 
+      }); 
+      const data = await r.json(); 
+      if (!data.ok) throw Error(data.message || 'Submission failed'); 
+      result.innerHTML = '<p class="notice">' + (kind === 'property' ? 'Thank you. Your property has been submitted for review.' : 'Thank you. Your details have been submitted successfully.') + '</p>'; 
+      form.reset(); 
+    } catch(e) { 
+      result.innerHTML = '<p class="notice">We could not save this form. Please send your enquiry via WhatsApp.</p><a class="btn small" target="_blank" rel="noopener" href="' + waLink('Website enquiry (' + kind + '):\n' + Object.entries(payload).map(([k,v]) => k + ': ' + v).join('\n')) + '">Continue on WhatsApp ↗</a>'; 
+    } finally { 
+      if (btn) {
+        btn.disabled = false; 
+        btn.textContent = kind === 'property' ? 'Send for approval ↗' : kind === 'requirement' ? 'Send requirement ↗' : 'Submit registration ↗'; 
+      }
+    } 
+  } 
+
+  $$('form[data-form]').forEach(f => f.addEventListener('submit', e => { e.preventDefault(); submitForm(f); }));
   
   loadProperties();
 </script>
