@@ -578,7 +578,7 @@
   let hasSearched = false;
 
   const $ = s => document.querySelector(s);
-  const $$ = s => [...document.quexrySelectorAll(s)];
+  const $$ = s => [...document.querySelectorAll(s)];
   const apiReady = () => LUCKY_CONFIG.apiUrl.startsWith('https://script.google.com/macros/s/') && LUCKY_CONFIG.apiUrl.endsWith('/exec');
 
   function normalize(str = '') {
