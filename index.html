@@ -666,40 +666,57 @@
     $$('[data-modal]').forEach(b => b.onclick = () => openModal(b.dataset.modal));
   }
 
-  async function loadProperties() {
-    if (!apiReady()) {
-      $('#listingStatus').textContent = 'Apps Script API configuration pending.';
-      return;
-    }
+function loadProperties() {
+  if (!apiReady()) {
+    $('#listingStatus').textContent = 'Apps Script API configuration pending.';
+    return;
+  }
+
+  const oldScript = document.getElementById('propertyJsonpScript');
+  if (oldScript) oldScript.remove();
+
+  window.luckyPropertiesCallback = function(data) {
     try {
-      const r = await fetch(LUCKY_CONFIG.apiUrl + '?action=listings', { cache: 'no-store' });
-      if (!r.ok) throw Error('Could not load listings');
-      const data = await r.json();
-      
-      // Include all non-empty properties (Available, Sold, Approved)
-      properties = Array.isArray(data.properties) 
+      properties = Array.isArray(data.properties)
         ? data.properties.filter(p => p.title || p.city || p.id)
         : [];
-      
+
       render();
-    } catch(e) {
+
+      if (!data.ok && $('#listingStatus')) {
+        $('#listingStatus').textContent =
+          'Listings could not be loaded. Please try again later.';
+      }
+    } catch (e) {
       properties = [];
       render();
       if ($('#listingStatus')) {
-        $('#listingStatus').textContent = 'Listings could not be loaded. Please try again later or contact us directly.';
+        $('#listingStatus').textContent = 'Unable to display property listings.';
       }
+    } finally {
+      delete window.luckyPropertiesCallback;
+      const script = document.getElementById('propertyJsonpScript');
+      if (script) script.remove();
     }
-  }
+  };
 
-  function openModal(id) { 
-    const m = $('#' + id);
-    if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
-  }
+  const script = document.createElement('script');
+  script.id = 'propertyJsonpScript';
+  script.src = LUCKY_CONFIG.apiUrl
+    + '?action=listings&callback=luckyPropertiesCallback';
+  script.onerror = function() {
+    delete window.luckyPropertiesCallback;
+    script.remove();
+    properties = [];
+    render();
+    if ($('#listingStatus')) {
+      $('#listingStatus').textContent =
+        'Listings could not be loaded. Please try again later or contact us directly.';
+    }
+  };
 
-  function closeModals() { 
-    $$('.modal').forEach(m => m.classList.remove('open')); 
-    document.body.style.overflow = ''; 
-  }
+  document.head.appendChild(script);
+}
 
   $$('[data-modal]').forEach(b => b.addEventListener('click', () => openModal(b.dataset.modal)));
   $$('[data-close]').forEach(b => b.addEventListener('click', closeModals));
