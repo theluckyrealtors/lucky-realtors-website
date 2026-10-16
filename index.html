@@ -84,14 +84,16 @@
 
     .listing-wrap { background: #fffdf8; }
     .section-head { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: 28px; }
-    .filters { display: grid; grid-template-columns: repeat(4, 1fr) auto auto; gap: 10px; padding: 17px; background: #f0ece2; border: 1px solid var(--line); margin-bottom: 25px; }
+    .filters { display: grid; grid-template-columns: repeat(4, minmax(130px, 1fr)) minmax(170px, 1.2fr) auto auto; gap: 12px; padding: 20px; background: linear-gradient(135deg, #f3efe6, #ebe4d7); border: 1px solid var(--line); margin-bottom: 25px; box-shadow: 0 12px 30px rgba(16,44,37,.045); }
     .filters label, .form label { display: block; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: #6f7168; text-transform: uppercase; }
-    .filters select, .form input, .form select, .form textarea { width: 100%; margin-top: 8px; padding: 12px; border: 1px solid #d6d0c3; background: #fffefa; color: #222; outline-color: var(--gold); font-size: 12px; }
+    .filters select, .filters input, .form input, .form select, .form textarea { width: 100%; min-width: 0; margin-top: 8px; padding: 13px 12px; border: 1px solid #d6d0c3; border-radius: 0; background: #fffefa; color: #222; outline-color: var(--gold); font-size: 12px; }
     
     .property-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 19px; }
-    .property { border: 1px solid var(--line); background: white; min-width: 0; position: relative; }
-    .property-img { height: 220px; position: relative; background: #d9d6ca center/cover; }
-    .tag { position: absolute; top: 14px; left: 14px; background: var(--green); color: white; padding: 8px 10px; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+    .property { border: 1px solid var(--line); background: white; min-width: 0; position: relative; overflow: hidden; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+    .property:hover { transform: translateY(-4px); box-shadow: 0 18px 38px rgba(16,44,37,.12); border-color: #c8b98f; }
+    .property-img { height: 235px; position: relative; background: #d9d6ca center/cover; transition: background-size .25s ease; }
+    .property-img:after { content: ''; position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, rgba(9,26,21,.18)); pointer-events: none; }
+    .tag { position: absolute; z-index: 1; top: 14px; left: 14px; background: var(--green); color: white; padding: 9px 11px; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 3px 10px #0002; }
     .tag.sold-tag { background: #a82323; }
     .property-body { padding: 20px; }
     .property-body h3 { font: 600 26px/1.05 'Cormorant Garamond', serif; margin: 0 0 8px; }
@@ -150,11 +152,15 @@
       nav { gap: 12px; font-size: 10px; }
       .categories { grid-template-columns: repeat(3, 1fr); }
       .property-grid, .board-grid, .offices-grid { grid-template-columns: repeat(2, 1fr); }
-      .filters { grid-template-columns: repeat(2, 1fr); }
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 14px; gap: 12px; }
       .feature-grid { grid-template-columns: 1fr; }
       .trust { grid-template-columns: repeat(2, 1fr); }
       .trust div:nth-child(2) { border: 0; }
       .hero-badge { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
     }
 
     @media(max-width: 650px) {
@@ -170,7 +176,14 @@
       .categories { grid-template-columns: repeat(2, 1fr); }
       .category { height: 145px; }
       .property-grid, .req-grid { grid-template-columns: 1fr; }
-      .filters { grid-template-columns: 1fr 1fr; }
+      .filters { grid-template-columns: 1fr 1fr; padding: 13px; gap: 11px; }
+      .filters label { min-width: 0; }
+      .filters .btn { width: 100%; min-height: 44px; padding: 11px 8px; }
+      .filters label:last-of-type { grid-column: 1 / -1; }
+      .property-img { height: 220px; }
+      .property-body { padding: 17px; }
+      .property-body h3 { font-size: 25px; }
+      .section-head > .btn { width: 100%; }
       .section-head { align-items: start; flex-direction: column; }
       .feature { grid-template-columns: 1fr; }
       .feature img { height: 190px; min-height: 0; }
@@ -363,7 +376,7 @@
 
     <div class="status" id="listingStatus">Select filters and click Search to view results.</div>
     <div class="property-grid" id="propertyGrid"></div>
-    <p class="notice">Property photographs are illustrative until replaced with listing-specific images. All listing details are subject to verification.</p>
+    <p class="notice">Photos are category-matched illustrative images unless a direct property photo URL is supplied in the Google Sheet. All listing details are subject to verification.</p>
   </section>
 
   <!-- Active Requirements Section -->
@@ -612,18 +625,51 @@
 
   function card(p) {
     const typeText = normalize(p.type || p.category || '');
-    const imageValue = p.imageUrl || p.imageurl || p['Image URL'] || p.image || p.photo || '';
-    const typeImages = [
-      { match: 'agriculture', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80' },
-      { match: 'r zone', url: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=900&q=80' },
-      { match: 'industrial', url: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=900&q=80' },
-      { match: 'naina', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80' },
-      { match: 'jv plotting', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80' },
-      { match: 'jv construction', url: 'https://images.unsplash.com/photo-1503387762-59203de1e9b8?auto=format&fit=crop&w=900&q=80' }
+    const imageValue = p.imageUrl || p.imageurl || p['Image URL'] || p.image || p.photo || p.photoUrl || p.photoURL || '';
+    // Multiple image choices per property category. A stable property-specific selector
+    // gives each listing its own photo while keeping the image consistent between visits.
+    const imagePools = [
+      { match: 'agriculture', urls: [
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=82&sat=-8',
+        'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1000&q=85'
+      ]},
+      { match: 'rzone', urls: [
+        'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85'
+      ]},
+      { match: 'industrial', urls: [
+        'https://images.unsplash.com/photo-1565610222536-ef125c59da2e?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1567789884554-0b844b597180?auto=format&fit=crop&w=1000&q=85'
+      ]},
+      { match: 'naina', urls: [
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=1000&q=85'
+      ]},
+      { match: 'jvplotting', urls: [
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1000&q=85'
+      ]},
+      { match: 'jvconstruction', urls: [
+        'https://images.unsplash.com/photo-1503387762-59203de1e9b8?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85',
+        'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1000&q=85'
+      ]}
     ];
-    const typeImage = typeImages.find(item => typeText.includes(item.match));
-    const fallbackImage = typeImage ? typeImage.url : 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80';
-    const img = (imageValue && String(imageValue).trim().startsWith('http')) ? String(imageValue).trim() : fallbackImage;
+    const imagePool = imagePools.find(item => typeText.includes(item.match));
+    const identity = String(p.id || p.title || p.city || 'property');
+    const imageIndex = [...identity].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const fallbackPool = imagePool ? imagePool.urls : imagePools[0].urls;
+    const fallbackImage = fallbackPool[imageIndex % fallbackPool.length];
+    const rawImage = String(imageValue || '').trim();
+    const img = /^https?:\/\//i.test(rawImage) ? rawImage : fallbackImage;
     const targetWa = getWaNumber(p);
     const isSold = normalize(p.status || p.availability).includes('sold');
 
@@ -672,7 +718,7 @@
       const countryMatch = !cNorm || normalize(p.country).includes(cNorm) || (cNorm === 'uae' && normalize(p.country).includes('dubai'));
       const typeMatch = !tNorm || normalize(p.type).includes(tNorm) || tNorm.includes(normalize(p.type));
       const purposeMatch = !pNorm || normalize(p.purpose).includes(pNorm) || pNorm.includes(normalize(p.purpose));
-      const textMatch = !qNorm || [p.title, p.city, p.country, p.description].map(normalize).join(' ').includes(qNorm);
+      const textMatch = !qNorm || [p.title, p.city, p.country, p.description, p.type, p.zone, p.area, p.id, p.unit, p.purpose].map(normalize).join(' ').includes(qNorm);
       const sold = normalize(p.status || p.availability).includes('sold');
       const statusMatch = !statusNorm || (statusNorm === 'sold' ? sold : !sold);
 
@@ -761,6 +807,16 @@ function loadProperties() {
       hasSearched = true;
       render();
     };
+  }
+  // Pressing Enter in the location field applies the same filters as Search.
+  if ($('#searchFilter')) {
+    $('#searchFilter').addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        hasSearched = true;
+        render();
+      }
+    });
   }
 
   if ($('#clearFilters')) {
