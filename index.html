@@ -194,6 +194,7 @@
       .trust { padding: 22px 4%; }
       .trust strong { font-size: 22px; }
     }
+    body.modal-open { overflow: hidden; }
   </style>
 </head>
 <body>
@@ -751,7 +752,6 @@
       : '<div class="empty">No properties found matching your search criteria.<br><br><button class="btn small" data-modal="requirementModal">Post your requirement ↗</button></div>';
     
     $('#listingStatus').textContent = `${filtered.length} ${filtered.length === 1 ? 'property' : 'properties'} found for your search.`;
-    $$('[data-modal]').forEach(b => b.onclick = () => openModal(b.dataset.modal));
   }
 
 function loadProperties() {
@@ -808,12 +808,32 @@ function loadProperties() {
   document.head.appendChild(script);
 }
 
+  // Open the requested modal. This function was missing, so the requirement buttons did nothing.
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    closeModals();
+    modal.classList.add('open');
+    document.body.classList.add('modal-open');
+    const firstField = modal.querySelector('input:not([type="hidden"]), select, textarea');
+    if (firstField) setTimeout(() => firstField.focus(), 50);
+  }
+
   function closeModals() {
-  document.querySelectorAll('.modal').forEach(m => {
-    m.classList.remove('open');
+    document.querySelectorAll('.modal').forEach(m => {
+      m.classList.remove('open');
+    });
+    document.body.classList.remove('modal-open');
+  }
+
+  // Event delegation ensures all data-modal buttons work, including buttons added during search.
+  document.addEventListener('click', event => {
+    const trigger = event.target.closest('[data-modal]');
+    if (!trigger) return;
+    event.preventDefault();
+    openModal(trigger.dataset.modal);
   });
-  document.body.classList.remove('modal-open');
-}
+
   $$('[data-close]').forEach(b => b.addEventListener('click', closeModals));
   $$('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeModals(); }));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
