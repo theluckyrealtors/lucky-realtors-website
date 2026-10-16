@@ -347,6 +347,13 @@
           <option>JV</option>
         </select>
       </label>
+      <label>PROPERTY STATUS
+        <select id="statusFilter">
+          <option value="">Available + Sold</option>
+          <option value="available">Available</option>
+          <option value="sold">Sold</option>
+        </select>
+      </label>
       <label>SEARCH LOCATION (OPTIONAL)
         <input id="searchFilter" placeholder="City, area or title">
       </label>
@@ -604,10 +611,21 @@
   }
 
   function card(p) {
-    const defaultImg = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80';
-    const img = (p.imageurl && String(p.imageurl).startsWith('http')) ? p.imageurl : defaultImg;
+    const typeText = normalize(p.type || p.category || '');
+    const imageValue = p.imageUrl || p.imageurl || p['Image URL'] || p.image || p.photo || '';
+    const typeImages = [
+      { match: 'agriculture', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80' },
+      { match: 'r zone', url: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=900&q=80' },
+      { match: 'industrial', url: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=900&q=80' },
+      { match: 'naina', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80' },
+      { match: 'jv plotting', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80' },
+      { match: 'jv construction', url: 'https://images.unsplash.com/photo-1503387762-59203de1e9b8?auto=format&fit=crop&w=900&q=80' }
+    ];
+    const typeImage = typeImages.find(item => typeText.includes(item.match));
+    const fallbackImage = typeImage ? typeImage.url : 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80';
+    const img = (imageValue && String(imageValue).trim().startsWith('http')) ? String(imageValue).trim() : fallbackImage;
     const targetWa = getWaNumber(p);
-    const isSold = normalize(p.status).includes('sold');
+    const isSold = normalize(p.status || p.availability).includes('sold');
 
     const waMsg = `Hello THE LUCKY REALTORS,\n\nI am interested in the following property listing on your website:\n\n📌 Title: ${p.title || 'Property Opportunity'}\n📍 Location: ${p.city || ''}, ${p.country || ''}\n🏷️ Type: ${p.type || ''} (${p.purpose || 'Sale'})\n💰 Price: ${p.price || 'Price on request'}\n🆔 Property ID: ${p.id || 'N/A'}\n\nPlease share further details and schedule a discussion.`;
 
@@ -647,6 +665,7 @@
     const cNorm = normalize($('#countryFilter').value);
     const tNorm = normalize($('#typeFilter').value);
     const pNorm = normalize($('#purposeFilter').value);
+    const statusNorm = normalize($('#statusFilter') ? $('#statusFilter').value : '');
     const qNorm = normalize($('#searchFilter').value);
 
     const filtered = properties.filter(p => {
@@ -654,8 +673,10 @@
       const typeMatch = !tNorm || normalize(p.type).includes(tNorm) || tNorm.includes(normalize(p.type));
       const purposeMatch = !pNorm || normalize(p.purpose).includes(pNorm) || pNorm.includes(normalize(p.purpose));
       const textMatch = !qNorm || [p.title, p.city, p.country, p.description].map(normalize).join(' ').includes(qNorm);
+      const sold = normalize(p.status || p.availability).includes('sold');
+      const statusMatch = !statusNorm || (statusNorm === 'sold' ? sold : !sold);
 
-      return countryMatch && typeMatch && purposeMatch && textMatch;
+      return countryMatch && typeMatch && purposeMatch && statusMatch && textMatch;
     });
 
     $('#propertyGrid').innerHTML = filtered.length 
@@ -677,10 +698,11 @@ function loadProperties() {
 
   window.luckyPropertiesCallback = function(data) {
     try {
-      properties = Array.isArray(data.properties)
-        ? data.properties.filter(p => p.title || p.city || p.id)
-        : [];
+      if (!data || !data.ok || !Array.isArray(data.properties)) {
+        throw new Error((data && data.message) || 'The listings response was not valid.');
+      }
 
+      properties = data.properties.filter(p => p && (p.title || p.city || p.id));
       render();
 
       if (!data.ok && $('#listingStatus')) {
@@ -708,6 +730,7 @@ function loadProperties() {
     delete window.luckyPropertiesCallback;
     script.remove();
     properties = [];
+    hasSearched = true;
     render();
     if ($('#listingStatus')) {
       $('#listingStatus').textContent =
@@ -745,6 +768,7 @@ function loadProperties() {
       if ($('#countryFilter')) $('#countryFilter').value = '';
       if ($('#typeFilter')) $('#typeFilter').value = '';
       if ($('#purposeFilter')) $('#purposeFilter').value = '';
+      if ($('#statusFilter')) $('#statusFilter').value = '';
       if ($('#searchFilter')) $('#searchFilter').value = ''; 
       hasSearched = false; 
       render(); 
