@@ -550,7 +550,17 @@
       <label class="full">Image URL (optional)<input name="imageUrl" type="url" placeholder="Public link to property photo"></label>
       <label>Contact name<input name="ownerName" required placeholder="Your name"></label>
       <label>Contact phone<input name="ownerPhone" required placeholder="Country code + number"></label>
-      <label class="full">Property details<textarea name="description" placeholder="Access, zoning, deal structure, general details. Do not include confidential documents."></textarea></label>
+      <label class="full">Contact email (required to share your private documents with you)<input name="ownerEmail" type="email" required placeholder="you@example.com" autocomplete="email"></label>
+      <div class="full document-upload-panel">
+        <h3>Private property documents</h3>
+        <p class="notice">These documents are private. They are not shown to website visitors. They are stored in a restricted Google Drive folder and shared with you and the site owner for review.</p>
+        <label>1. Zone Certificate<input name="zoneCertificate" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx" data-private-docs></label>
+        <label>2. 7/12 Extract<input name="sevenTwelve" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx" data-private-docs></label>
+        <label>3. Demarcation Document<input name="demarcation" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx" data-private-docs></label>
+        <label>4. Other Documents — add as many files as needed<input name="otherDocuments" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx" data-private-docs></label>
+        <p class="notice">For reliable uploads, keep each file under 5 MB and the total submission under 8 MB. The number of files is not capped, but Google Apps Script and web requests have technical size limits.</p>
+      </div>
+      <label class="full">Public property details<textarea name="description" placeholder="Write details suitable for public display. Do not put private phone numbers or confidential information here."></textarea></label>
       <div class="full">
         <button class="btn dark" type="submit">Send for approval ↗</button>
         <div class="form-result"></div>
@@ -590,6 +600,14 @@
   </div>
 </div>
 
+<style>
+  .document-upload-panel{grid-column:1/-1;padding:16px;border:1px solid #d6d0c3;background:#f3efe6;display:grid;gap:13px}
+  .document-upload-panel h3{font:500 24px 'Cormorant Garamond',serif;color:var(--green);margin:0}
+  .document-upload-panel label{display:block}
+  .document-upload-panel input[type=file]{display:block;width:100%;margin-top:8px;padding:10px;background:#fffefa;border:1px solid #d6d0c3;font-size:12px}
+  .form button:disabled{opacity:.6;cursor:wait}
+  </style>
+  <iframe name="luckySubmissionFrame" id="luckySubmissionFrame" title="Submission response" style="display:none"></iframe>
 <script>
   const LUCKY_CONFIG = {
   apiUrl: 'https://script.google.com/macros/s/AKfycbwHRPtweFtAGN4Z6g6OuxhX3T44icF8FSf5Bbg1IrQ-nKnBsoRlqQ0QtLj1GcSriozW/exec',
@@ -884,40 +902,97 @@ function loadProperties() {
   if ($('#mainWhatsApp')) $('#mainWhatsApp').href = waLink('Hello THE LUCKY REALTORS, I would like to discuss a property enquiry.');
   if ($('#floatWA')) $('#floatWA').href = waLink('Hello THE LUCKY REALTORS, I have a property enquiry.');
 
-  async function submitForm(form) { 
-    const kind = form.dataset.form; 
-    const result = form.querySelector('.form-result'); 
-    const payload = Object.fromEntries(new FormData(form).entries()); 
-    payload.formType = kind; 
-    payload.submittedAt = new Date().toISOString(); 
+  function fileToData(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({ name: file.name, mimeType: file.type || 'application/octet-stream', data: String(reader.result).split(',')[1] || '' });
+      reader.onerror = () => reject(new Error('Could not read ' + file.name));
+      reader.readAsDataURL(file);
+    });
+  }
 
-    if (!apiReady()) { 
-      result.innerHTML = '<p class="notice">Setup needed: connect Google Apps Script Web App URL in LUCKY_CONFIG. You can contact us directly via WhatsApp.</p><a class="btn small" target="_blank" rel="noopener" href="' + waLink('Website enquiry (' + kind + '):\n' + Object.entries(payload).map(([k,v]) => k + ': ' + v).join('\n')) + '">Send details by WhatsApp ↗</a>'; 
-      return; 
-    } 
+  async function submitForm(form) {
+    const kind = form.dataset.form;
+    const result = form.querySelector('.form-result');
+    const btn = form.querySelector('button[type=submit]');
+    const payload = {};
+    for (const [key, value] of new FormData(form).entries()) {
+      if (value instanceof File) continue;
+      payload[key] = String(value).trim();
+    }
+    payload.formType = kind;
+    payload.submittedAt = new Date().toISOString();
+    payload.documents = [];
 
-    const btn = form.querySelector('button[type=submit]'); 
-    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+    if (!apiReady()) {
+      result.textContent = 'The submission system is not configured. Please contact us by WhatsApp.';
+      return;
+    }
+    if (btn) { btn.disabled = true; btn.textContent = 'Preparing secure submission…'; }
+    result.textContent = 'Preparing your submission. Please keep this window open.';
 
-    try { 
-      const r = await fetch(LUCKY_CONFIG.apiUrl, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-        body: JSON.stringify(payload) 
-      }); 
-      const data = await r.json(); 
-      if (!data.ok) throw Error(data.message || 'Submission failed'); 
-      result.innerHTML = '<p class="notice">' + (kind === 'property' ? 'Thank you. Your property has been submitted for review.' : 'Thank you. Your details have been submitted successfully.') + '</p>'; 
-      form.reset(); 
-    } catch(e) { 
-      result.innerHTML = '<p class="notice">We could not save this form. Please send your enquiry via WhatsApp.</p><a class="btn small" target="_blank" rel="noopener" href="' + waLink('Website enquiry (' + kind + '):\n' + Object.entries(payload).map(([k,v]) => k + ': ' + v).join('\n')) + '">Continue on WhatsApp ↗</a>'; 
-    } finally { 
-      if (btn) {
-        btn.disabled = false; 
-        btn.textContent = kind === 'property' ? 'Send for approval ↗' : kind === 'requirement' ? 'Send requirement ↗' : 'Submit registration ↗'; 
+    try {
+      if (kind === 'property') {
+        const inputs = [...form.querySelectorAll('[data-private-docs]')];
+        let totalBytes = 0;
+        for (const input of inputs) {
+          for (const file of [...input.files]) {
+            if (file.size > 5 * 1024 * 1024) throw new Error('Each document must be 5 MB or smaller: ' + file.name);
+            totalBytes += file.size;
+            payload.documents.push({ category: input.name, ...(await fileToData(file)) });
+          }
+        }
+        if (totalBytes > 8 * 1024 * 1024) throw new Error('Please keep all documents together under 8 MB per submission.');
       }
-    } 
-  } 
+      if (btn) btn.textContent = 'Sending submission…';
+      payload.clientToken = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2);
+
+      // Use a hidden form/iframe rather than fetch: Apps Script redirects can trigger browser CORS errors.
+      const frame = document.getElementById('luckySubmissionFrame');
+      const postForm = document.createElement('form');
+      postForm.method = 'POST';
+      postForm.action = LUCKY_CONFIG.apiUrl;
+      postForm.target = frame.name;
+      postForm.acceptCharset = 'UTF-8';
+      postForm.style.display = 'none';
+      const field = document.createElement('textarea');
+      field.name = 'payload';
+      field.value = JSON.stringify(payload);
+      postForm.appendChild(field);
+      document.body.appendChild(postForm);
+      window.luckySubmissionPending = { form, result, btn, postForm, kind };
+      frame.onload = function() {
+        // Cross-origin iframe content is intentionally not read. The script posts a small status message back.
+      };
+      window.addEventListener('message', function onSubmissionMessage(event) {
+        if (event.origin !== 'https://script.google.com' && event.origin !== 'https://script.googleusercontent.com') return;
+        if (!event.data || event.data.source !== 'lucky-submission') return;
+        window.removeEventListener('message', onSubmissionMessage);
+        const pending = window.luckySubmissionPending;
+        if (!pending || pending.postForm !== postForm) return;
+        postForm.remove();
+        window.luckySubmissionPending = null;
+        if (event.data.ok) {
+          result.textContent = kind === 'property' ? 'Thank you. Your property and private documents have been submitted for review. The listing will not appear publicly until approved.' : 'Thank you. Your details have been submitted successfully.';
+          form.reset();
+        } else {
+          result.textContent = 'We could not confirm the submission. Please contact us by WhatsApp before submitting again.';
+        }
+        if (btn) { btn.disabled = false; btn.textContent = kind === 'property' ? 'Send for approval ↗' : kind === 'requirement' ? 'Send requirement ↗' : 'Submit registration ↗'; }
+      });
+      postForm.submit();
+      // If browser/Google blocks the callback, never claim the submission succeeded.
+      setTimeout(() => {
+        if (window.luckySubmissionPending && window.luckySubmissionPending.postForm === postForm) {
+          result.textContent = 'The submission response is taking longer than expected. Check with us on WhatsApp before trying again.';
+          if (btn) { btn.disabled = false; btn.textContent = kind === 'property' ? 'Send for approval ↗' : kind === 'requirement' ? 'Send requirement ↗' : 'Submit registration ↗'; }
+        }
+      }, 30000);
+    } catch (error) {
+      result.textContent = error && error.message ? error.message : 'Could not prepare submission. Please try again.';
+      if (btn) { btn.disabled = false; btn.textContent = kind === 'property' ? 'Send for approval ↗' : kind === 'requirement' ? 'Send requirement ↗' : 'Submit registration ↗'; }
+    }
+  }
 
   $$('form[data-form]').forEach(f => f.addEventListener('submit', e => { e.preventDefault(); submitForm(f); }));
   
