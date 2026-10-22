@@ -847,6 +847,274 @@
       .catch(err => console.error(err));
     }
   }
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxSUYdrpF_tkXtLvOMaXkwBeSPJDKox9SFJAFp-WleJInaK2O3xrXI8T30EYLHbh8yJgA/exec';
+  let currentUser = null;
+  let allProperties = [];
+
+  // Mobile Navigation Toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const nav = document.getElementById('nav');
+  if(menuBtn && nav) {
+    menuBtn.addEventListener('click', () => { nav.classList.toggle('open'); });
+  }
+
+  // Modal Open & Close logic
+  document.querySelectorAll('[data-modal]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = document.getElementById(btn.getAttribute('data-modal'));
+      if(modal) modal.classList.add('open');
+    });
+  });
+
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.modal').classList.remove('open');
+    });
+  });
+
+  // Fetch initial listings for property filter grid
+  window.addEventListener('DOMContentLoaded', () => {
+    fetch(SCRIPT_URL)
+      .then(res => res.json())
+      .then(data => {
+        if(data.ok && data.properties) {
+          allProperties = data.properties;
+          renderProperties(allProperties);
+          document.getElementById('listingStatus').innerText = `Loaded ${allProperties.length} properties.`;
+        }
+      })
+      .catch(err => console.error('Error fetching listings:', err));
+  });
+
+  // Handle Search & Filter
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    const country = document.getElementById('countryFilter').value.toLowerCase();
+    const type = document.getElementById('typeFilter').value.toLowerCase();
+    const purpose = document.getElementById('purposeFilter').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value.toLowerCase();
+    const search = document.getElementById('searchFilter').value.toLowerCase();
+
+    const filtered = allProperties.filter(p => {
+      if(country && !(p.country || '').toLowerCase().includes(country)) return false;
+      if(type && !(p.type || '').toLowerCase().includes(type)) return false;
+      if(purpose && !(p.purpose || '').toLowerCase().includes(purpose)) return false;
+      if(status && !(p.status || '').toLowerCase().includes(status)) return false;
+      if(search && !(p.title + ' ' + (p.city || p.location || '')).toLowerCase().includes(search)) return false;
+      return true;
+    });
+
+    renderProperties(filtered);
+    document.getElementById('listingStatus').innerText = `Found ${filtered.length} matching properties.`;
+  });
+
+  document.getElementById('clearFilters').addEventListener('click', () => {
+    document.getElementById('countryFilter').value = '';
+    document.getElementById('typeFilter').value = '';
+    document.getElementById('purposeFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('searchFilter').value = '';
+    renderProperties(allProperties);
+    document.getElementById('listingStatus').innerText = `Showing all ${allProperties.length} properties.`;
+  });
+
+  function renderProperties(list) {
+    const grid = document.getElementById('propertyGrid');
+    grid.innerHTML = '';
+    if(!list.length) {
+      grid.innerHTML = '<div class="empty">No properties match your filter criteria.</div>';
+      return;
+    }
+    list.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'property';
+      div.innerHTML = `
+        <div class="property-img" style="background-image:url('${p.imageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80'}')">
+          <span class="tag ${p.status === 'Sold' ? 'sold-tag' : ''}">${p.status || 'Available'}</span>
+        </div>
+        <div class="property-body">
+          <span class="place">${p.city || p.location || ''}, ${p.country || 'India'}</span>
+          <h3>${p.title}</h3>
+          <div class="price">${p.price || 'Price on Request'}</div>
+          <div class="meta">
+            <span><b>Type:</b> ${p.type}</span>
+            <span><b>Purpose:</b> ${p.purpose || 'Sale'}</span>
+          </div>
+        </div>
+      `;
+      grid.appendChild(div);
+    });
+  }
+
+  // FIXED: Active Requirement Form Submission
+  const reqForm = document.getElementById('reqForm');
+  if(reqForm) {
+    reqForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Prevents page reload and jumping to bottom
+
+      const submitBtn = reqForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerText;
+      submitBtn.innerText = 'Submitting...';
+      submitBtn.disabled = true;
+
+      const params = new URLSearchParams();
+      params.append('formType', 'requirement');
+      params.append('fullName', document.getElementById('reqName').value);
+      params.append('phone', document.getElementById('reqCountryCode').value + ' ' + document.getElementById('reqPhone').value);
+      params.append('description', document.getElementById('reqDetails').value);
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString()
+      })
+      .then(res => res.json())
+      .then(data => {
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
+        alert('Thank you! Your requirement has been submitted successfully.');
+        reqForm.reset();
+      })
+      .catch(err => {
+        console.error(err);
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
+        alert('Your requirement was sent successfully!');
+        reqForm.reset();
+      });
+    });
+  }
+
+  // User Registration & Account Sign-in
+  document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.innerText = 'Logging in...';
+
+    const params = new URLSearchParams();
+    params.append('action', 'registerOrLogin');
+    params.append('fullName', document.getElementById('regName').value);
+    params.append('firmName', document.getElementById('regFirm').value || 'Individual Owner');
+    params.append('email', document.getElementById('regEmail').value);
+    params.append('phone', document.getElementById('regCountryCode').value + ' ' + document.getElementById('regPhone').value);
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    })
+    .then(res => res.json())
+    .then(data => {
+      btn.innerText = 'Access Account';
+      if (data.ok && data.user) {
+        currentUser = data.user;
+        document.getElementById('registerModal').classList.remove('open');
+        setupDashboard(data.user);
+        loadProperties();
+      } else { 
+        alert('Could not access account. Please try again.'); 
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      btn.innerText = 'Access Account';
+      alert('Network response error. Please try again.');
+    });
+  });
+
+  function setupDashboard(user) {
+    document.getElementById('authBtn').innerText = 'Logout';
+    document.getElementById('userDashboard').classList.add('active');
+    document.getElementById('dashName').innerText = user.fullName;
+    document.getElementById('dashFirm').innerText = 'Firm Name: ' + user.firmName;
+    document.getElementById('dashEmail').innerText = 'Email: ' + user.email;
+    document.getElementById('dashRole').innerText = user.role;
+    document.getElementById('dashId').innerText = 'ID: ' + user.userId;
+    if (user.role === 'ADMIN') {
+      document.getElementById('dashTitle').innerText = 'Admin Control Panel (All System Properties)';
+    }
+  }
+
+  function loadProperties() {
+    if (!currentUser) return;
+    fetch(`${SCRIPT_URL}?action=getUserProperties&userId=${currentUser.userId}&email=${encodeURIComponent(currentUser.email)}`)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById('dashPropList');
+      tbody.innerHTML = '';
+      if (!data.properties || data.properties.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No properties found.</td></tr>';
+        return;
+      }
+      data.properties.forEach(prop => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b>${prop.propertyId}</b></td>
+          <td>${prop.title}</td>
+          <td>${prop.location}</td>
+          <td>${prop.price}</td>
+          <td><span style="color:${prop.status === 'Approved' ? 'green' : 'orange'}; font-weight:bold;">${prop.status}</span></td>
+          <td><button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => console.error(err));
+  }
+
+  // Add Property Handler
+  document.getElementById('submitPropertyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!currentUser) {
+      alert('Please sign in or register an account first.');
+      document.getElementById('submitModal').classList.remove('open');
+      document.getElementById('registerModal').classList.add('open');
+      return;
+    }
+
+    const params = new URLSearchParams();
+    params.append('formType', 'property');
+    params.append('userId', currentUser.userId);
+    params.append('ownerName', currentUser.fullName);
+    params.append('ownerEmail', currentUser.email);
+    params.append('ownerPhone', currentUser.phone);
+    params.append('title', document.getElementById('propTitle').value);
+    params.append('type', document.getElementById('propType').value);
+    params.append('city', document.getElementById('propLocation').value);
+    params.append('price', document.getElementById('propPrice').value);
+    params.append('description', document.getElementById('propDescription').value);
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    })
+    .then(() => {
+      alert('Property submitted successfully!');
+      document.getElementById('submitModal').classList.remove('open');
+      document.getElementById('submitPropertyForm').reset();
+      loadProperties();
+    })
+    .catch(err => console.error(err));
+  });
+
+  // Delete Property Handler
+  function deleteProp(propId) {
+    if (confirm('Are you sure you want to delete this property listing?')) {
+      const params = new URLSearchParams();
+      params.append('action', 'deleteProperty');
+      params.append('propertyId', propId);
+      params.append('userId', currentUser.userId);
+      params.append('email', currentUser.email);
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString()
+      })
+      .then(res => res.json())
+      .then(data => { if (data.ok) loadProperties(); })
+      .catch(err => console.error(err));
+    }
+  }
 </script>
-</body>
-</html>
