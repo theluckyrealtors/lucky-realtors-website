@@ -48,6 +48,7 @@
     .btn.small { padding: 10px 13px; font-size: 10px; }
     .btn.disabled { background: #888; border-color: #888; color: #fff; cursor: not-allowed; opacity: 0.7; }
     .btn.danger { background: #a82323; color: white; border-color: #a82323; padding: 6px 10px; font-size: 10px; }
+    .btn.whatsapp { background: #176b49; color: white; border-color: #176b49; padding: 10px 14px; font-size: 10px; margin-top: 10px; width: 100%; display: inline-flex; gap: 6px; align-items: center; justify-content: center; }
     .menu { display: none; background: none; border: 0; font-size: 24px; cursor: pointer; }
 
     .hero { min-height: 590px; position: relative; display: flex; align-items: center; color: white; background: linear-gradient(90deg, rgba(8,29,24,.93), rgba(8,29,24,.66) 48%, rgba(8,29,24,.08)), url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=85') center/cover; }
@@ -281,7 +282,7 @@
           <th>Location</th>
           <th>Price</th>
           <th>Status</th>
-          <th>Action</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody id="dashPropList">
@@ -498,8 +499,8 @@
         <input type="url" id="propMapLink" required placeholder="Paste Google Maps link here (Mandatory)">
       </div>
       <div class="full">
-        <label>Description *</label>
-        <textarea id="propDescription" required placeholder="Include details such as area size, zoning, key advantages..."></textarea>
+        <label>Description (Additional Info) *</label>
+        <textarea id="propDescription" required placeholder="Include details such as area size, zoning, key advantages... (Note: Phone numbers are not allowed here)"></textarea>
       </div>
       <div class="full">
         <button type="submit" class="btn dark" style="width:100%; padding:18px; font-size:13px; letter-spacing:1.5px;">Submit Property ↗</button>
@@ -671,6 +672,7 @@
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxSUYdrpF_tkXtLvOMaXkwBeSPJDKox9SFJAFp-WleJInaK2O3xrXI8T30EYLHbh8yJgA/exec';
   let currentUser = null;
   let allProperties = [];
+  const ADMIN_WHATSAPP = '919881112233'; // Admin WhatsApp number
 
   const menuBtn = document.getElementById('menuBtn');
   const nav = document.getElementById('nav');
@@ -716,7 +718,6 @@
     }
   }
 
-  // Reliable form submitter using hidden iframe (Bypasses all CORS errors)
   function submitToAppsScript(params) {
     return new Promise((resolve) => {
       const iframeName = 'hidden_iframe_' + Math.floor(Math.random() * 1000000);
@@ -805,6 +806,7 @@
       return;
     }
     list.forEach(p => {
+      const waMsg = encodeURIComponent(`Hi, I am interested in this property: ${p.title} (${p.city || p.location || 'India'}) - ID: ${p.id}`);
       const div = document.createElement('div');
       div.className = 'property';
       div.innerHTML = `
@@ -819,6 +821,7 @@
             <span><b>Type:</b> ${p.type}</span>
             <span><b>Purpose:</b> ${p.purpose || 'Sale'}</span>
           </div>
+          <a class="btn whatsapp" href="https://wa.me/${ADMIN_WHATSAPP}?text=${waMsg}" target="_blank">💬 Contact Admin on WhatsApp</a>
         </div>
       `;
       grid.appendChild(div);
@@ -859,23 +862,25 @@
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    submitToAppsScript({
-      action: 'login',
-      email: email,
-      password: password
-    }).then(() => {
-      btn.innerText = 'Sign In';
-      currentUser = {
-        fullName: email.split('@')[0],
-        firmName: 'Vendor Partner',
-        email: email,
-        userId: 'TLR-USER-' + Math.floor(100000 + Math.random() * 900000),
-        role: (email.toLowerCase().includes('theluckyrealtors') || email.toLowerCase().includes('suleman')) ? 'ADMIN' : 'VENDOR'
-      };
-      document.getElementById('registerModal').classList.remove('open');
-      setupDashboard(currentUser);
-      alert('Signed in successfully!');
-    });
+    fetch(`${SCRIPT_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`)
+      .then(res => res.json())
+      .then(data => {
+        btn.innerText = 'Sign In';
+        if (data && data.ok && data.user) {
+          currentUser = data.user;
+          document.getElementById('registerModal').classList.remove('open');
+          setupDashboard(currentUser);
+          loadProperties();
+          alert('Signed in successfully!');
+        } else {
+          alert(data.message || 'Incorrect credentials.');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        btn.innerText = 'Sign In';
+        alert('Connection error. Please try again.');
+      });
   });
 
   // Register Handler
@@ -890,27 +895,25 @@
     const phone = document.getElementById('regCountryCode').value + ' ' + document.getElementById('regPhone').value;
     const password = document.getElementById('regPassword').value;
 
-    submitToAppsScript({
-      action: 'register',
-      fullName: fullName,
-      firmName: firmName,
-      email: email,
-      phone: phone,
-      password: password
-    }).then(() => {
-      btn.innerText = 'Create Account';
-      currentUser = {
-        fullName: fullName,
-        firmName: firmName,
-        email: email,
-        phone: phone,
-        userId: 'TLR-USER-' + Math.floor(100000 + Math.random() * 900000),
-        role: 'VENDOR'
-      };
-      document.getElementById('registerModal').classList.remove('open');
-      setupDashboard(currentUser);
-      alert('Account created and logged in successfully!');
-    });
+    fetch(`${SCRIPT_URL}?action=register&fullName=${encodeURIComponent(fullName)}&firmName=${encodeURIComponent(firmName)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`)
+      .then(res => res.json())
+      .then(data => {
+        btn.innerText = 'Create Account';
+        if (data && data.ok && data.user) {
+          currentUser = data.user;
+          document.getElementById('registerModal').classList.remove('open');
+          setupDashboard(currentUser);
+          loadProperties();
+          alert('Account created and logged in successfully!');
+        } else { 
+          alert(data.message || 'Registration failed.'); 
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        btn.innerText = 'Create Account';
+        alert('Connection error. Please try again.');
+      });
   });
 
   // Request OTP for Forgot Password
@@ -920,13 +923,20 @@
       alert('Please enter your email address first.');
       return;
     }
-    submitToAppsScript({
-      action: 'sendOTP',
-      email: email
-    }).then(() => {
-      alert('OTP request sent! Please check your email inbox.');
-      document.getElementById('otpSection').style.display = 'flex';
-    });
+    fetch(`${SCRIPT_URL}?action=sendOTP&email=${encodeURIComponent(email)}`)
+      .then(res => res.json())
+      .then(data => {
+        if(data && data.ok) {
+          alert(data.message);
+          document.getElementById('otpSection').style.display = 'flex';
+        } else {
+          alert(data.message || 'Could not send OTP.');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Error sending OTP.');
+      });
   }
 
   // Verify OTP and Reset Password
@@ -940,15 +950,20 @@
       return;
     }
 
-    submitToAppsScript({
-      action: 'resetPassword',
-      email: email,
-      otp: otp,
-      newPassword: newPassword
-    }).then(() => {
-      alert('Password reset request completed. You can now sign in.');
-      switchAuthTab('signin');
-    });
+    fetch(`${SCRIPT_URL}?action=resetPassword&email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}&newPassword=${encodeURIComponent(newPassword)}`)
+      .then(res => res.json())
+      .then(data => {
+        if(data && data.ok) {
+          alert(data.message);
+          switchAuthTab('signin');
+        } else {
+          alert(data.message || 'Password reset failed.');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Error resetting password.');
+      });
   }
 
   function setupDashboard(user) {
@@ -976,14 +991,19 @@
         return;
       }
       data.properties.forEach(prop => {
+        const nextStatus = (prop.status === 'Sold') ? 'Available' : 'Sold';
+        const statusColor = (prop.status === 'Available' || prop.status === 'Approved') ? 'green' : '#a82323';
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><b>${prop.propertyId}</b></td>
           <td>${prop.title}</td>
           <td>${prop.location}</td>
           <td>${prop.price}</td>
-          <td><span style="color:${prop.status === 'Available' || prop.status === 'Approved' ? 'green' : 'orange'}; font-weight:bold;">${prop.status}</span></td>
-          <td><button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button></td>
+          <td><span style="color:${statusColor}; font-weight:bold;">${prop.status || 'Available'}</span></td>
+          <td>
+            <button class="btn small dark" onclick="toggleStatus('${prop.propertyId}', '${nextStatus}')">Mark ${nextStatus}</button>
+            <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
+          </td>
         `;
         tbody.appendChild(tr);
       });
@@ -991,12 +1011,35 @@
     .catch(err => console.error(err));
   }
 
-  // Submit Property Handler
+  function toggleStatus(propId, newStatus) {
+    const targetUrl = `${SCRIPT_URL}?action=updatePropertyStatus&propertyId=${propId}&status=${encodeURIComponent(newStatus)}&userId=${currentUser.userId}&email=${encodeURIComponent(currentUser.email)}`;
+    fetch(targetUrl)
+      .then(res => res.json())
+      .then(data => {
+        if(data && data.ok) {
+          loadProperties();
+          // Also refresh public listings
+          fetch(SCRIPT_URL).then(r => r.json()).then(d => { if(d.properties) allProperties = d.properties; renderProperties(allProperties); });
+        } else {
+          alert('Could not update status.');
+        }
+      })
+      .catch(err => console.error(err));
+  }
+
+  // Submit Property Handler with Phone Number Validation on Description
   document.getElementById('submitPropertyForm').addEventListener('submit', function(e) {
     e.preventDefault();
     if (!currentUser) {
       alert('Please sign in or register an account first to list a property.');
       document.getElementById('registerModal').classList.add('open');
+      return;
+    }
+
+    const desc = document.getElementById('propDescription').value;
+    const phoneRegex = /(\+?\d{10,13})|(\b\d{5}[-\s]?\d{5}\b)|(\b\d{3}[-\s]?\d{3}[-\s]?\d{4}\b)/;
+    if (phoneRegex.test(desc)) {
+      alert('Phone numbers are not allowed in the additional info/description field. Please use the phone number field instead.');
       return;
     }
 
@@ -1016,13 +1059,15 @@
       city: document.getElementById('propLocation').value,
       mapLink: document.getElementById('propMapLink').value,
       price: document.getElementById('propPrice').value,
-      description: document.getElementById('propDescription').value
+      description: desc
     }).then(() => {
       submitBtn.innerText = originalText;
       submitBtn.disabled = false;
       alert('Property submitted successfully!');
       document.getElementById('submitPropertyForm').reset();
       loadProperties();
+      // Refresh public listings
+      fetch(SCRIPT_URL).then(r => r.json()).then(d => { if(d.properties) allProperties = d.properties; renderProperties(allProperties); });
     });
   });
 
@@ -1035,7 +1080,10 @@
         email: currentUser.email
       }).then(() => {
         loadProperties();
+        fetch(SCRIPT_URL).then(r => r.json()).then(d => { if(d.properties) allProperties = d.properties; renderProperties(allProperties); });
       });
     }
   }
 </script>
+</body>
+</html>
