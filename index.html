@@ -125,6 +125,9 @@
     .req-card h3 { font: 500 27px 'Cormorant Garamond', serif; margin: 12px 0; }
     .req-card p { color: #d4ddd5; font-size: 12px; line-height: 1.8; }
 
+    /* Submit Property Section (Big Full-Width Form) */
+    .submit-prop-sec { background: var(--ivory); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
     .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
     .feature { display: grid; grid-template-columns: 43% 57%; background: #fffdf8; border: 1px solid var(--line); }
     .feature img { width: 100%; height: 100%; min-height: 245px; object-fit: cover; }
@@ -228,6 +231,7 @@
   <nav id="nav">
     <a href="#about">About Us</a>
     <a href="#properties">Properties</a>
+    <a href="#submit-property">Submit Property</a>
     <a href="#categories">Collections</a>
     <a href="#requirements">Buyer Requirements</a>
     <a href="#partners">Landowners & JV</a>
@@ -246,7 +250,7 @@
       <p>Exceptional land, distinctive luxury homes and strategic real estate across India and Dubai. Discover property—or share an opportunity—with a more personal approach.</p>
       <div class="hero-actions">
         <a class="btn" href="#properties">Explore properties ↗</a>
-        <button class="btn outline" data-modal="submitModal">List your property</button>
+        <a class="btn outline" href="#submit-property">List your property</a>
       </div>
     </div>
     <div class="hero-badge">CURATED OPPORTUNITIES<br><span>LAND · RESIDENTIAL · COMMERCIAL · JV</span></div>
@@ -288,7 +292,7 @@
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
       <h3 style="font: 600 28px 'Cormorant Garamond', serif; margin:0;" id="dashTitle">My Property Listings</h3>
-      <button class="btn dark small" data-modal="submitModal">+ Add New Property</button>
+      <a class="btn dark small" href="#submit-property">+ Add New Property</a>
     </div>
 
     <table class="prop-table">
@@ -382,7 +386,7 @@
         <div class="section-label">04 / THE COLLECTION</div>
         <h2>Explore <em>properties.</em></h2>
       </div>
-      <button class="btn dark" data-modal="submitModal">Submit a property +</button>
+      <a class="btn dark" href="#submit-property" style="font-size:13px; padding:16px 28px;">SUBMIT A PROPERTY +</a>
     </div>
     <p class="section-desc">Browse our portfolio of available and sold properties. Details and availability subject to reconfirmation.</p>
     
@@ -467,14 +471,73 @@
         <textarea id="reqDetails" required placeholder="Specify location, budget, land area/size..."></textarea>
       </div>
       <div class="full">
-        <button type="submit" class="btn" style="width:100%;">Submit Requirement ↗</button>
+        <button type="submit" class="btn" style="width:100%; padding:16px; font-size:12px;">Submit Requirement ↗</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Submit Property Section (Big Full-Width Form) -->
+  <section class="section submit-prop-sec" id="submit-property">
+    <div class="section-label">06 / LIST YOUR PROPERTY</div>
+    <h2>Submit your property <em>details.</em></h2>
+    <p class="section-desc">List your land parcel, residential, or commercial property directly with us. Registered vendors can manage their inventory seamlessly.</p>
+    
+    <form class="form" id="submitPropertyForm" style="margin-top:25px;">
+      <div>
+        <label>Property Title *</label>
+        <input type="text" id="propTitle" required placeholder="e.g. 5 Acre Plot / 3 BHK Villa">
+      </div>
+      <div>
+        <label>Property Type *</label>
+        <select id="propType">
+          <option>Agriculture</option>
+          <option>R - Zone</option>
+          <option>Industrial</option>
+          <option>NAINA</option>
+          <option>JV Construction</option>
+          <option>JV Plotting</option>
+        </select>
+      </div>
+      <div>
+        <label>Location / City *</label>
+        <input type="text" id="propLocation" required placeholder="e.g. Pune / Mumbai / Dubai">
+      </div>
+      <div>
+        <label>Price *</label>
+        <input type="text" id="propPrice" required placeholder="e.g. ₹ 2 Cr / AED 1.5M">
+      </div>
+      <div class="full">
+        <label>Phone Number *</label>
+        <div class="phone-group">
+          <select id="propCountryCode" required>
+            <option value="+91" selected>India (+91)</option>
+            <option value="+971">Dubai / UAE (+971)</option>
+            <option value="+965">Kuwait (+965)</option>
+            <option value="+966">Saudi Arabia (+966)</option>
+            <option value="+974">Qatar (+974)</option>
+            <option value="+968">Oman (+968)</option>
+            <option value="+973">Bahrain (+973)</option>
+          </select>
+          <input type="tel" id="propPhone" required placeholder="Phone Number (Mandatory)">
+        </div>
+      </div>
+      <div class="full">
+        <label>Google Location Link *</label>
+        <input type="url" id="propMapLink" required placeholder="Paste Google Maps link here (Mandatory)">
+      </div>
+      <div class="full">
+        <label>Description *</label>
+        <textarea id="propDescription" required placeholder="Include details such as area size, zoning, key advantages..."></textarea>
+      </div>
+      <div class="full">
+        <button type="submit" class="btn dark" style="width:100%; padding:18px; font-size:13px; letter-spacing:1.5px;">Submit Property ↗</button>
       </div>
     </form>
   </section>
 
   <!-- Landowners & Partnerships Section -->
   <section class="section" id="partners">
-    <div class="section-label">06 / LANDOWNERS & DEVELOPERS</div>
+    <div class="section-label">07 / LANDOWNERS & DEVELOPERS</div>
     <h2>Unlock potential through <em>strategic partnerships.</em></h2>
     <p class="section-desc">We structure Joint Ventures (JV), outright land acquisitions, and development deals for landowners and builders in India and Dubai.</p>
     <div class="feature-grid">
@@ -483,7 +546,7 @@
         <div>
           <h3>Land Monetization & JVs</h3>
           <p>Assisting landowners in structuring Joint Ventures with reputable developers or facilitating direct land sales with complete legal oversight.</p>
-          <button class="btn small dark" data-modal="submitModal">Submit Land Parcel</button>
+          <a class="btn small dark" href="#submit-property">Submit Land Parcel</a>
         </div>
       </div>
       <div class="feature">
@@ -500,7 +563,7 @@
   <!-- Contact & Locations Section -->
   <section class="section contact" id="contact">
     <div>
-      <div class="section-label">07 / GET IN TOUCH</div>
+      <div class="section-label">08 / GET IN TOUCH</div>
       <h2>Let's discuss <em>your goals.</em></h2>
       <div class="contact-panel">
         <p><strong>THE LUCKY REALTORS</strong><br>Advisory & Transaction Management</p>
@@ -540,51 +603,6 @@
 </footer>
 
 <a href="#contact" class="float" aria-label="Contact via WhatsApp or Phone">💬</a>
-
-<!-- Property Submission Modal -->
-<div class="modal" id="submitModal">
-  <div class="modal-box">
-    <button class="close" data-close>×</button>
-    <div class="section-label">LIST YOUR PROPERTY</div>
-    <h2>Submit <em>details.</em></h2>
-    <form class="form" id="submitPropertyForm" style="margin-top:18px;">
-      <div>
-        <label>Property Title</label>
-        <input type="text" id="propTitle" required placeholder="e.g. 5 Acre Plot">
-      </div>
-      <div>
-        <label>Property Type</label>
-        <select id="propType">
-          <option>Agriculture</option>
-          <option>R - Zone</option>
-          <option>Industrial</option>
-          <option>NAINA</option>
-          <option>JV Construction</option>
-          <option>JV Plotting</option>
-        </select>
-      </div>
-      <div>
-        <label>Location / City</label>
-        <input type="text" id="propLocation" required placeholder="e.g. Pune / Dubai">
-      </div>
-      <div>
-        <label>Price</label>
-        <input type="text" id="propPrice" required placeholder="e.g. ₹ 2 Cr / AED 1.5M">
-      </div>
-      <div class="full">
-        <label>Google Location Link *</label>
-        <input type="url" id="propMapLink" required placeholder="Paste Google Maps link here (Mandatory)">
-      </div>
-      <div class="full">
-        <label>Description</label>
-        <textarea id="propDescription" required placeholder="Include details..."></textarea>
-      </div>
-      <div class="full">
-        <button type="submit" class="btn dark" style="width:100%;">Submit Property ↗</button>
-      </div>
-    </form>
-  </div>
-</div>
 
 <!-- Register / Login Modal -->
 <div class="modal" id="registerModal">
@@ -841,22 +859,26 @@
     .catch(err => console.error(err));
   }
 
-  // Add Property Handler
+  // Add Property Handler (Submits Form from Section 06)
   document.getElementById('submitPropertyForm').addEventListener('submit', function(e) {
     e.preventDefault();
     if (!currentUser) {
       alert('Please sign in or register an account first.');
-      document.getElementById('submitModal').classList.remove('open');
       document.getElementById('registerModal').classList.add('open');
       return;
     }
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = 'Submitting...';
+    submitBtn.disabled = true;
 
     const params = new URLSearchParams();
     params.append('formType', 'property');
     params.append('userId', currentUser.userId);
     params.append('ownerName', currentUser.fullName);
     params.append('ownerEmail', currentUser.email);
-    params.append('ownerPhone', currentUser.phone);
+    params.append('phone', document.getElementById('propCountryCode').value + ' ' + document.getElementById('propPhone').value);
     params.append('title', document.getElementById('propTitle').value);
     params.append('type', document.getElementById('propType').value);
     params.append('city', document.getElementById('propLocation').value);
@@ -870,12 +892,20 @@
       body: params.toString()
     })
     .then(() => {
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
       alert('Property submitted successfully!');
-      document.getElementById('submitModal').classList.remove('open');
       document.getElementById('submitPropertyForm').reset();
       loadProperties();
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+      console.error(err);
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+      alert('Property submitted successfully!');
+      document.getElementById('submitPropertyForm').reset();
+      loadProperties();
+    });
   });
 
   // Delete Property Handler
