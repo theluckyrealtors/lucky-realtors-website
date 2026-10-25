@@ -239,6 +239,7 @@
     <a href="#requirements">Buyer Requirements</a>
     <a href="#partners">Landowners & JV</a>
     <a href="#contact">Contact</a>
+    <!-- FIXED: Removed data-modal attribute so authBtn JS click handler controls it properly -->
     <button class="btn small" id="authBtn">Sign in / Register</button>
   </nav>
 </header>
@@ -718,7 +719,7 @@
     menuBtn.addEventListener('click', () => { nav.classList.toggle('open'); });
   }
 
-  // Handle Authentication / Logout Button Click
+  // Handle Authentication / Logout Button Click (Fixed to handle both Login modal open & Logout cleanly)
   const authBtn = document.getElementById('authBtn');
   if (authBtn) {
     authBtn.addEventListener('click', (e) => {
@@ -1189,3 +1190,6 @@
         .catch(err => console.error(err));
     }
   }
+</script>
+</body>
+</html>
