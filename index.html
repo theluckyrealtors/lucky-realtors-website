@@ -14,7 +14,8 @@
   <meta property="og:url" content="https://www.theluckyrealtors.com/">
   <meta name="twitter:card" content="summary_large_image">
 
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23123b2c'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-family='Georgia, serif' font-size='65' font-weight='bold' fill='%23c8a86b'>L</text></svg>">  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23123b2c'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-family='Georgia, serif' font-size='65' font-weight='bold' fill='%23c8a86b'>L</text></svg>">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" as="style">
@@ -177,6 +178,13 @@
     .auth-view { display: none; }
     .auth-view.active { display: grid; }
     .link-btn { background: none; border: none; padding: 0; font-size: 11px; color: var(--gold); cursor: pointer; text-decoration: underline; }
+
+    /* Big Success Banner Overlay */
+    .success-modal { position: fixed; inset: 0; background: rgba(8,29,24,0.85); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
+    .success-modal.open { display: flex; }
+    .success-box { background: var(--ivory); border: 2px solid var(--gold); width: min(500px, 100%); padding: 35px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
+    .success-box h2 { font: 600 32px 'Cormorant Garamond', serif; color: var(--green); margin-bottom: 12px; }
+    .success-box p { font-size: 13px; line-height: 1.8; color: #444; margin-bottom: 24px; }
 
     @media(max-width: 900px) {
       nav { gap: 12px; font-size: 10px; }
@@ -561,14 +569,14 @@
         <h4>Pune, India Office</h4>
         <p>Tower 7, Magarpatta Entrance, Magarpatta, Hadapsar, Pune, Maharashtra 411013</p>
         <div class="map-frame">
-          <iframe title="Pune Office Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.1812!2d73.926!3d18.515!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTjCsDMwJzU0LjAiTiA3M8KwNTUnMzMuNiJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+          <iframe title="Pune Office Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.1812!2d73.926!3d18.515!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sMTjCsDMwJzU0LjAiTiA3M8KwNTUnMzMuNiJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
         </div>
       </div>
       <div class="office-card">
         <h4>Dubai, UAE Strategic Advisory</h4>
         <p>Office No. 708, 7th Floor, Park Lane Tower 24, Al A'amal Street, Business Bay, Za'abeel, Dubai</p>
         <div class="map-frame">
-          <iframe title="Dubai Office Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.15!2d55.275!3d25.185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDExJzA2LjAiTiA1NcKwMTYnMzAuMCJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+          <iframe title="Dubai Office Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.15!2d55.275!3d25.185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sMjXCsDExJzA2LjAiTiA1NcKwMTYnMzAuMCJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
         </div>
       </div>
     </div>
@@ -592,6 +600,18 @@
 </footer>
 
 <a href="#contact" class="float" aria-label="Contact via WhatsApp or Phone">💬</a>
+
+<!-- Big Success Banner Modal -->
+<div class="success-modal" id="successModal">
+  <div class="success-box">
+    <h2 id="successTitle">Submission Successful!</h2>
+    <p id="successMessage">Your request has been successfully submitted.</p>
+    <div id="successWhatsappContainer" style="margin-bottom: 20px; display: none;">
+      <a id="successWhatsappBtn" class="btn whatsapp" href="#" target="_blank" rel="noopener">💬 Notify Admin on WhatsApp Now</a>
+    </div>
+    <button class="btn dark" onclick="closeSuccessModal()" style="width:100%;">OK, Continue</button>
+  </div>
+</div>
 
 <!-- Auth Modal (Sign In / Register / Forgot Password) -->
 <div class="modal" id="registerModal" role="dialog" aria-modal="true" aria-label="Authentication Modal">
@@ -687,10 +707,10 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwg9cshheucmpZmju0Vg-ilacEzvo5dMsnORCIR2oqhUpByR0rNMFAwAGUMQzsYCBs/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwg9cshheucmpZmju0Vg-ilacEzvo5dMsn2h-748t4l4QGjG5R-hW033vU4K1fW/exec';
   let currentUser = null;
   let allProperties = [];
-  const ADMIN_WHATSAPP = '918788843016'; // Admin WhatsApp number
+  const ADMIN_WHATSAPP = '918788843016'; // Updated Admin WhatsApp number
 
   const menuBtn = document.getElementById('menuBtn');
   const nav = document.getElementById('nav');
@@ -710,6 +730,24 @@
       btn.closest('.modal').classList.remove('open');
     });
   });
+
+  function showSuccessModal(title, message, whatsappText = '') {
+    document.getElementById('successTitle').innerText = title;
+    document.getElementById('successMessage').innerText = message;
+    const waContainer = document.getElementById('successWhatsappContainer');
+    const waBtn = document.getElementById('successWhatsappBtn');
+    if (whatsappText) {
+      waBtn.href = `https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(whatsappText)}`;
+      waContainer.style.display = 'block';
+    } else {
+      waContainer.style.display = 'none';
+    }
+    document.getElementById('successModal').classList.add('open');
+  }
+
+  function closeSuccessModal() {
+    document.getElementById('successModal').classList.remove('open');
+  }
 
   function switchAuthTab(tab) {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
@@ -876,17 +914,24 @@
       submitBtn.innerText = 'Submitting...';
       submitBtn.disabled = true;
 
+      const fullName = document.getElementById('reqName').value;
+      const phone = document.getElementById('reqCountryCode').value + ' ' + document.getElementById('reqPhone').value;
+      const location = document.getElementById('reqLocation').value || 'N/A';
+      const desc = document.getElementById('reqDetails').value;
+
       submitToAppsScript({
         formType: 'requirement',
-        fullName: document.getElementById('reqName').value,
-        phone: document.getElementById('reqCountryCode').value + ' ' + document.getElementById('reqPhone').value,
-        location: document.getElementById('reqLocation').value || 'N/A',
-        description: document.getElementById('reqDetails').value
+        fullName: fullName,
+        phone: phone,
+        address: location,
+        description: desc
       }).then(() => {
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;
-        alert('Thank you! Your requirement has been submitted successfully.');
         reqForm.reset();
+        
+        const waText = `Hello Admin, a new buyer requirement has been submitted on THE LUCKY REALTORS:\n\nName: ${fullName}\nPhone: ${phone}\nLocation: ${location}\nDetails: ${desc}`;
+        showSuccessModal('Requirement Submitted Successfully!', 'Thank you! Your requirement has been registered. Our advisory team will contact you shortly.', waText);
       });
     });
   }
@@ -1032,7 +1077,7 @@
           <td>${prop.title}</td>
           <td>${prop.location}</td>
           <td>${prop.price}</td>
-          <td><span style="color:${statusColor}; font-weight:bold;">${prop.status || 'Available'}</span></td>
+          <td><span style="color:${statusColor}; font-weight:bold;">${prop.status || 'Pending Approval'}</span></td>
           <td>
             <button class="btn small dark" onclick="toggleStatus('${prop.propertyId}', '${nextStatus}')">Mark ${nextStatus}</button>
             <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
@@ -1058,7 +1103,7 @@
       .catch(err => console.error(err));
   }
 
-  // Submit Property Handler with Phone Number Validation on Description
+  // Submit Property Handler with Phone Number Validation on Description & Approval Notice
   document.getElementById('submitPropertyForm').addEventListener('submit', function(e) {
     e.preventDefault();
     if (!currentUser) {
@@ -1079,25 +1124,33 @@
     submitBtn.innerText = 'Submitting...';
     submitBtn.disabled = true;
 
+    const propTitle = document.getElementById('propTitle').value;
+    const propType = document.getElementById('propType').value;
+    const propCity = document.getElementById('propLocation').value;
+    const propPrice = document.getElementById('propPrice').value;
+    const propPhone = document.getElementById('propCountryCode').value + ' ' + document.getElementById('propPhone').value;
+
     submitToAppsScript({
       formType: 'property',
       userId: currentUser.userId,
       ownerName: currentUser.fullName,
       ownerEmail: currentUser.email,
-      phone: document.getElementById('propCountryCode').value + ' ' + document.getElementById('propPhone').value,
-      title: document.getElementById('propTitle').value,
-      type: document.getElementById('propType').value,
-      city: document.getElementById('propLocation').value,
+      phone: propPhone,
+      title: propTitle,
+      type: propType,
+      city: propCity,
       mapLink: document.getElementById('propMapLink').value,
-      price: document.getElementById('propPrice').value,
+      price: propPrice,
       description: desc
     }).then(() => {
       submitBtn.innerText = originalText;
       submitBtn.disabled = false;
-      alert('Property submitted successfully!');
       document.getElementById('submitPropertyForm').reset();
       loadProperties();
       jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; renderProperties(allProperties); } });
+
+      const waText = `Hello Admin, a new property has been uploaded by vendor ${currentUser.fullName} (${currentUser.email}) and needs your verification & approval:\n\nTitle: ${propTitle}\nType: ${propType}\nCity: ${propCity}\nPrice: ${propPrice}\nPhone: ${propPhone}`;
+      showSuccessModal('Property Submitted Successfully!', 'Your property has been submitted and is currently pending admin approval. Once verified and approved by the admin, it will go live on the website.', waText);
     });
   });
 
