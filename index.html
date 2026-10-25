@@ -239,7 +239,7 @@
     <a href="#requirements">Buyer Requirements</a>
     <a href="#partners">Landowners & JV</a>
     <a href="#contact">Contact</a>
-    <button class="btn small" id="authBtn" data-modal="registerModal">Sign in / Register</button>
+    <button class="btn small" id="authBtn">Sign in / Register</button>
   </nav>
 </header>
 
@@ -718,6 +718,28 @@
     menuBtn.addEventListener('click', () => { nav.classList.toggle('open'); });
   }
 
+  // Handle Authentication / Logout Button Click
+  const authBtn = document.getElementById('authBtn');
+  if (authBtn) {
+    authBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentUser) {
+        currentUser = null;
+        authBtn.innerText = 'Sign in / Register';
+        const dashboard = document.getElementById('userDashboard');
+        if (dashboard) dashboard.classList.remove('active');
+        const dashPropList = document.getElementById('dashPropList');
+        if (dashPropList) dashPropList.innerHTML = '<tr><td colspan="6" style="text-align:center;">No properties found.</td></tr>';
+        const modal = document.getElementById('registerModal');
+        if (modal) modal.classList.remove('open');
+        alert('Logged out successfully.');
+      } else {
+        const modal = document.getElementById('registerModal');
+        if (modal) modal.classList.add('open');
+      }
+    });
+  }
+
   document.querySelectorAll('[data-modal]').forEach(btn => {
     btn.addEventListener('click', () => {
       const modal = document.getElementById(btn.getAttribute('data-modal'));
@@ -1167,6 +1189,3 @@
         .catch(err => console.error(err));
     }
   }
-</script>
-</body>
-</html>
