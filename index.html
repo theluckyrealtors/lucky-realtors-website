@@ -387,7 +387,7 @@
       <button class="btn dark" id="clearFilters" style="height:42px; margin-top:auto;">Reset</button>
     </div>
 
-    <div class="status" id="listingStatus">Select filters and click Search to view results.</div>
+    <div class="status" id="listingStatus">Please use the filters above and click Search to view properties.</div>
     <div class="property-grid" id="propertyGrid"></div>
   </section>
 
@@ -865,8 +865,7 @@
       .then(data => {
         if(data && data.properties) {
           allProperties = data.properties;
-          renderProperties(allProperties);
-          document.getElementById('listingStatus').innerText = `Loaded ${allProperties.length} properties.`;
+          // Do not render properties on initial load; grid remains empty until user clicks Search
         }
       })
       .catch(err => console.error('Error fetching listings:', err));
@@ -898,8 +897,8 @@
     document.getElementById('purposeFilter').value = '';
     document.getElementById('statusFilter').value = '';
     document.getElementById('searchFilter').value = '';
-    renderProperties(allProperties);
-    document.getElementById('listingStatus').innerText = `Showing all ${allProperties.length} properties.`;
+    document.getElementById('propertyGrid').innerHTML = '';
+    document.getElementById('listingStatus').innerText = 'Please use the filters above and click Search to view properties.';
   });
 
   function renderProperties(list) {
@@ -1182,7 +1181,7 @@
       .then(data => {
         if(data && data.ok) {
           loadProperties();
-          jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; renderProperties(allProperties); } });
+          jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; } });
           alert(`Property status updated to ${newStatus}.`);
         } else {
           alert('Could not update property status.');
@@ -1239,7 +1238,7 @@
       submitBtn.disabled = false;
       document.getElementById('submitPropertyForm').reset();
       loadProperties();
-      jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; renderProperties(allProperties); } });
+      jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; } });
 
       const waText = `Hello Admin, a new property has been uploaded by vendor ${currentUser.fullName} (${currentUser.email}) and needs your verification & approval:\n\nTitle: ${propTitle}\nType: ${propType}\nCity: ${propCity}\nPrice: ${propPrice}\nPhone: ${propPhone}`;
       showSuccessModal('Property Submitted Successfully!', 'Your property has been submitted and is currently pending admin approval. Once verified and approved by the admin, it will go live on the website.', waText);
@@ -1253,7 +1252,7 @@
         .then(data => {
           if (data && data.ok) {
             loadProperties();
-            jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; renderProperties(allProperties); } });
+            jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; } });
             alert('Property deleted successfully.');
           }
         })
