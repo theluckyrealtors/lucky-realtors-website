@@ -239,7 +239,6 @@
     <a href="#requirements">Buyer Requirements</a>
     <a href="#partners">Landowners & JV</a>
     <a href="#contact">Contact</a>
-    <!-- FIXED: Removed data-modal attribute so authBtn JS click handler controls it properly -->
     <button class="btn small" id="authBtn">Sign in / Register</button>
   </nav>
 </header>
@@ -290,8 +289,13 @@
       </div>
     </div>
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h3 style="font: 600 28px 'Cormorant Garamond', serif; margin:0;" id="dashTitle">My Property Listings</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+      <h3 style="font: 600 28px 'Cormorant Garamond', serif; margin:0;" id="dashTitle">Admin Control Panel</h3>
+      <div id="adminTabButtons" style="display:none; gap:8px;">
+        <button class="btn small dark" id="tabAllProps" onclick="switchAdminTab('all')">All Properties</button>
+        <button class="btn small outline" id="tabAdminProps" onclick="switchAdminTab('admin')" style="background:#102c25; color:#c8a86b;">Admin Properties</button>
+        <button class="btn small outline" id="tabVendorProps" onclick="switchAdminTab('vendor')" style="background:#102c25; color:#c8a86b;">Vendor Properties</button>
+      </div>
       <a class="btn dark small" href="#submit-property">+ Add New Property</a>
     </div>
 
@@ -307,7 +311,7 @@
         </tr>
       </thead>
       <tbody id="dashPropList">
-        <tr><td colspan="6" style="text-align:center;">No properties submitted yet.</td></tr>
+        <tr><td colspan="6" style="text-align:center;">No properties found.</td></tr>
       </tbody>
     </table>
   </section>
@@ -711,7 +715,8 @@
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwg9cshheucmpZmju0Vg-ilacEzvo5dMsnORCIR2oqhUpByR0rNMFAwAGUMQzsYCBs/exec';
   let currentUser = null;
   let allProperties = [];
-  const ADMIN_WHATSAPP = '918788843016'; // Updated Admin WhatsApp number
+  let currentAdminTab = 'all'; // 'all', 'admin', 'vendor'
+  const ADMIN_WHATSAPP = '918788843016';
 
   const menuBtn = document.getElementById('menuBtn');
   const nav = document.getElementById('nav');
@@ -719,7 +724,7 @@
     menuBtn.addEventListener('click', () => { nav.classList.toggle('open'); });
   }
 
-  // Handle Authentication / Logout Button Click (Fixed to handle both Login modal open & Logout cleanly)
+  // Handle Authentication / Logout Button Click
   const authBtn = document.getElementById('authBtn');
   if (authBtn) {
     authBtn.addEventListener('click', (e) => {
@@ -1076,9 +1081,32 @@
     document.getElementById('dashEmail').innerText = 'Email: ' + user.email;
     document.getElementById('dashRole').innerText = user.role;
     document.getElementById('dashId').innerText = 'ID: ' + user.userId;
-    if (user.role === 'ADMIN') {
-      document.getElementById('dashTitle').innerText = 'Admin Control Panel (System Properties)';
+    
+    // Check if logged in user is admin (theluckyrealtors@gmail.com or role ADMIN)
+    if (user.role === 'ADMIN' || user.email === 'theluckyrealtors@gmail.com') {
+      document.getElementById('dashTitle').innerText = 'Admin Control Panel';
+      document.getElementById('adminTabButtons').style.display = 'flex';
+    } else {
+      document.getElementById('dashTitle').innerText = 'My Property Listings';
+      document.getElementById('adminTabButtons').style.display = 'none';
     }
+  }
+
+  function switchAdminTab(tab) {
+    currentAdminTab = tab;
+    ['all', 'admin', 'vendor'].forEach(t => {
+      const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Props`);
+      if(btn) {
+        if(t === tab) {
+          btn.style.background = '#c8a86b';
+          btn.style.color = '#17231c';
+        } else {
+          btn.style.background = '#102c25';
+          btn.style.color = '#c8a86b';
+        }
+      }
+    });
+    loadProperties();
   }
 
   function loadProperties() {
@@ -1087,24 +1115,60 @@
     .then(data => {
       const tbody = document.getElementById('dashPropList');
       tbody.innerHTML = '';
-      if (!data || !data.properties || data.properties.length === 0) {
+      
+      let props = data && data.properties ? data.properties : [];
+      const isAdmin = currentUser.role === 'ADMIN' || currentUser.email === 'theluckyrealtors@gmail.com';
+
+      if (isAdmin) {
+        if (currentAdminTab === 'admin') {
+          // Filter properties submitted by admin (theluckyrealtors@gmail.com)
+          props = props.filter(p => p.ownerEmail === 'theluckyrealtors@gmail.com');
+        } else if (currentAdminTab === 'vendor') {
+          // Filter properties submitted by vendors (not admin)
+          props = props.filter(p => p.ownerEmail !== 'theluckyrealtors@gmail.com');
+        }
+        // 'all' keeps all properties
+      }
+
+      if (props.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No properties found.</td></tr>';
         return;
       }
-      data.properties.forEach(prop => {
-        const nextStatus = (prop.status === 'Sold') ? 'Available' : 'Sold';
-        const statusColor = (prop.status === 'Available' || prop.status === 'Approved') ? 'green' : '#a82323';
+
+      props.forEach(prop => {
+        const isVendorProp = prop.ownerEmail !== 'theluckyrealtors@gmail.com';
+        const currentStatus = prop.status || 'Pending';
+        
+        let statusColor = 'green';
+        if (currentStatus.toLowerCase() === 'pending') statusColor = '#a82323';
+        else if (currentStatus.toLowerCase() === 'sold') statusColor = '#a82323';
+
+        let actionButtons = '';
+        if (isAdmin && isVendorProp) {
+          // Admin actions for vendor properties: Approve, Mark Sold/Available, Delete
+          actionButtons = `
+            <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', 'Approved')" style="background:#176b49; margin-bottom:4px;">Approve</button>
+            <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', 'Sold')" style="background:#8d6a2e; margin-bottom:4px;">Mark Sold</button>
+            <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', 'Available')" style="background:#102c25; margin-bottom:4px;">Mark Available</button>
+            <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
+          `;
+        } else {
+          // Standard toggle / delete
+          const nextStatus = (currentStatus === 'Sold') ? 'Available' : 'Sold';
+          actionButtons = `
+            <button class="btn small dark" onclick="toggleStatus('${prop.propertyId}', '${nextStatus}')">Mark ${nextStatus}</button>
+            <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
+          `;
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><b>${prop.propertyId}</b></td>
-          <td>${prop.title}</td>
-          <td>${prop.location}</td>
+          <td>${prop.title} <br><small style="color:#777;">By: ${prop.ownerName || prop.ownerEmail || 'Admin'}</small></td>
+          <td>${prop.location || prop.city || 'N/A'}</td>
           <td>${prop.price}</td>
-          <td><span style="color:${statusColor}; font-weight:bold;">${prop.status || 'Pending Approval'}</span></td>
-          <td>
-            <button class="btn small dark" onclick="toggleStatus('${prop.propertyId}', '${nextStatus}')">Mark ${nextStatus}</button>
-            <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
-          </td>
+          <td><span style="color:${statusColor}; font-weight:bold;">${currentStatus}</span></td>
+          <td>${actionButtons}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1112,18 +1176,23 @@
     .catch(err => console.error(err));
   }
 
-  function toggleStatus(propId, newStatus) {
+  function updatePropStatus(propId, newStatus) {
     const targetUrl = `${SCRIPT_URL}?action=updatePropertyStatus&propertyId=${propId}&status=${encodeURIComponent(newStatus)}&userId=${currentUser.userId}&email=${encodeURIComponent(currentUser.email)}`;
     jsonp(targetUrl)
       .then(data => {
         if(data && data.ok) {
           loadProperties();
           jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; renderProperties(allProperties); } });
+          alert(`Property status updated to ${newStatus}.`);
         } else {
-          alert('Could not update status.');
+          alert('Could not update property status.');
         }
       })
       .catch(err => console.error(err));
+  }
+
+  function toggleStatus(propId, newStatus) {
+    updatePropStatus(propId, newStatus);
   }
 
   // Submit Property Handler with Phone Number Validation on Description & Approval Notice
@@ -1185,6 +1254,7 @@
           if (data && data.ok) {
             loadProperties();
             jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; renderProperties(allProperties); } });
+            alert('Property deleted successfully.');
           }
         })
         .catch(err => console.error(err));
