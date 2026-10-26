@@ -7,7 +7,6 @@
   <meta name="description" content="Discover premium land, plots, luxury homes, villas, resorts, and commercial real estate in India and Dubai with THE LUCKY REALTORS.">
   <meta name="theme-color" content="#123b2c">
   
-  <!-- Open Graph / Social SEO -->
   <meta property="og:title" content="THE LUCKY REALTORS | Property, With Possibility">
   <meta property="og:description" content="Discover premium land, plots, luxury homes, villas, resorts, and commercial real estate in India and Dubai with THE LUCKY REALTORS.">
   <meta property="og:image" content="https://theluckyrealtors.com/Suleman.png">
@@ -59,6 +58,7 @@
     .btn.small { padding: 10px 13px; font-size: 10px; }
     .btn.disabled { background: #888; border-color: #888; color: #fff; cursor: not-allowed; opacity: 0.7; }
     .btn.danger { background: #a82323; color: white; border-color: #a82323; padding: 6px 10px; font-size: 10px; }
+    .btn.success { background: #176b49; color: white; border-color: #176b49; padding: 6px 10px; font-size: 10px; }
     .btn.whatsapp { background: #176b49; color: white; border-color: #176b49; padding: 10px 14px; font-size: 10px; margin-top: 10px; width: 100%; display: inline-flex; gap: 6px; align-items: center; justify-content: center; }
     .menu { display: none; background: none; border: 0; font-size: 24px; cursor: pointer; }
 
@@ -179,7 +179,6 @@
     .auth-view.active { display: grid; }
     .link-btn { background: none; border: none; padding: 0; font-size: 11px; color: var(--gold); cursor: pointer; text-decoration: underline; }
 
-    /* Big Success Banner Overlay */
     .success-modal { position: fixed; inset: 0; background: rgba(8,29,24,0.85); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
     .success-modal.open { display: flex; }
     .success-box { background: var(--ivory); border: 2px solid var(--gold); width: min(500px, 100%); padding: 35px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
@@ -290,7 +289,7 @@
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-      <h3 style="font: 600 28px 'Cormorant Garamond', serif; margin:0;" id="dashTitle">Admin Control Panel</h3>
+      <h3 style="font: 600 28px 'Cormorant Garamond', serif; margin:0;" id="dashTitle">Control Panel</h3>
       <div id="adminTabButtons" style="display:none; gap:8px;">
         <button class="btn small dark" id="tabAllProps" onclick="switchAdminTab('all')">All Properties</button>
         <button class="btn small outline" id="tabAdminProps" onclick="switchAdminTab('admin')" style="background:#102c25; color:#c8a86b;">Admin Properties</button>
@@ -303,7 +302,7 @@
       <thead>
         <tr>
           <th>Property ID</th>
-          <th>Title</th>
+          <th>Title & Source</th>
           <th>Location</th>
           <th>Price</th>
           <th>Status</th>
@@ -606,7 +605,6 @@
 
 <a href="#contact" class="float" aria-label="Contact via WhatsApp or Phone">💬</a>
 
-<!-- Big Success Banner Modal -->
 <div class="success-modal" id="successModal">
   <div class="success-box">
     <h2 id="successTitle">Submission Successful!</h2>
@@ -618,7 +616,6 @@
   </div>
 </div>
 
-<!-- Auth Modal (Sign In / Register / Forgot Password) -->
 <div class="modal" id="registerModal" role="dialog" aria-modal="true" aria-label="Authentication Modal">
   <div class="modal-box">
     <button class="close" data-close aria-label="Close Modal">×</button>
@@ -629,7 +626,6 @@
       <button class="auth-tab" onclick="switchAuthTab('forgot')">Forgot Password</button>
     </div>
 
-    <!-- Sign In View -->
     <form class="form auth-view active" id="loginForm">
       <div class="full">
         <label for="loginEmail">Email Address</label>
@@ -647,7 +643,6 @@
       </div>
     </form>
 
-    <!-- Register View -->
     <form class="form auth-view" id="registerForm">
       <div class="full">
         <label for="regName">Full Name</label>
@@ -682,7 +677,6 @@
       </div>
     </form>
 
-    <!-- Forgot Password View -->
     <div class="auth-view" id="forgotView" style="display:none; flex-direction:column; gap:13px;">
       <p>Enter your registered email address to receive an OTP for password reset.</p>
       <div>
@@ -713,10 +707,12 @@
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwg9cshheucmpZmju0Vg-ilacEzvo5dMsnORCIR2oqhUpByR0rNMFAwAGUMQzsYCBs/exec';
-  let currentUser = null;
-  let allProperties = [];
-  let currentAdminTab = 'all'; // 'all', 'admin', 'vendor'
+  const ADMIN_EMAIL = 'theluckyrealtors@gmail.com';
   const ADMIN_WHATSAPP = '918788843016';
+
+  let currentUser = null;
+  let publicProperties = [];
+  let currentAdminTab = 'all';
 
   const menuBtn = document.getElementById('menuBtn');
   const nav = document.getElementById('nav');
@@ -724,7 +720,6 @@
     menuBtn.addEventListener('click', () => { nav.classList.toggle('open'); });
   }
 
-  // Handle Authentication / Logout Button Click
   const authBtn = document.getElementById('authBtn');
   if (authBtn) {
     authBtn.addEventListener('click', (e) => {
@@ -802,7 +797,6 @@
     }
   }
 
-  // JSONP helper to completely bypass CORS / Connection errors
   function jsonp(url) {
     return new Promise((resolve, reject) => {
       const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
@@ -822,7 +816,6 @@
     });
   }
 
-  // Hidden iframe helper for POST requests
   function submitToAppsScript(params) {
     return new Promise((resolve) => {
       const iframeName = 'hidden_iframe_' + Math.floor(Math.random() * 1000000);
@@ -860,15 +853,18 @@
     });
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    jsonp(SCRIPT_URL)
+  function refreshPublicData() {
+    jsonp(`${SCRIPT_URL}?action=getPublicListings`)
       .then(data => {
         if(data && data.properties) {
-          allProperties = data.properties;
-          // Do not render properties on initial load; grid remains empty until user clicks Search
+          publicProperties = data.properties;
         }
       })
-      .catch(err => console.error('Error fetching listings:', err));
+      .catch(err => console.error('Error fetching public listings:', err));
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    refreshPublicData();
   });
 
   document.getElementById('searchBtn').addEventListener('click', () => {
@@ -878,7 +874,7 @@
     const status = document.getElementById('statusFilter').value.toLowerCase();
     const search = document.getElementById('searchFilter').value.toLowerCase();
 
-    const filtered = allProperties.filter(p => {
+    const filtered = publicProperties.filter(p => {
       if(country && !(p.country || '').toLowerCase().includes(country)) return false;
       if(type && !(p.type || '').toLowerCase().includes(type)) return false;
       if(purpose && !(p.purpose || '').toLowerCase().includes(purpose)) return false;
@@ -931,7 +927,6 @@
     });
   }
 
-  // Active Requirement Submission Logic
   const reqForm = document.getElementById('reqForm');
   if(reqForm) {
     reqForm.addEventListener('submit', function(e) {
@@ -963,7 +958,6 @@
     });
   }
 
-  // Sign In Handler
   document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
@@ -979,7 +973,7 @@
           currentUser = data.user;
           document.getElementById('registerModal').classList.remove('open');
           setupDashboard(currentUser);
-          loadProperties();
+          loadDashboardProperties();
           alert('Signed in successfully!');
         } else {
           alert(data.message || 'Incorrect credentials.');
@@ -992,14 +986,13 @@
       });
   });
 
-  // Register Handler
   document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
     btn.innerText = 'Creating account...';
 
     const fullName = document.getElementById('regName').value;
-    const firmName = document.getElementById('regFirm').value || 'Individual Owner';
+    const firmName = document.getElementById('regFirm').value || 'Vendor';
     const email = document.getElementById('regEmail').value;
     const phone = document.getElementById('regCountryCode').value + ' ' + document.getElementById('regPhone').value;
     const password = document.getElementById('regPassword').value;
@@ -1011,7 +1004,7 @@
           currentUser = data.user;
           document.getElementById('registerModal').classList.remove('open');
           setupDashboard(currentUser);
-          loadProperties();
+          loadDashboardProperties();
           alert('Account created and logged in successfully!');
         } else { 
           alert(data.message || 'Registration failed.'); 
@@ -1024,7 +1017,6 @@
       });
   });
 
-  // Request OTP for Forgot Password
   function requestOTP() {
     const email = document.getElementById('forgotEmail').value;
     if(!email) {
@@ -1046,7 +1038,6 @@
       });
   }
 
-  // Verify OTP and Reset Password
   function verifyAndResetPassword() {
     const email = document.getElementById('forgotEmail').value;
     const otp = document.getElementById('forgotOtp').value;
@@ -1081,12 +1072,11 @@
     document.getElementById('dashRole').innerText = user.role;
     document.getElementById('dashId').innerText = 'ID: ' + user.userId;
     
-    // Check if logged in user is admin (theluckyrealtors@gmail.com or role ADMIN)
-    if (user.role === 'ADMIN' || user.email === 'theluckyrealtors@gmail.com') {
+    if (user.role === 'ADMIN' || user.email === ADMIN_EMAIL) {
       document.getElementById('dashTitle').innerText = 'Admin Control Panel';
       document.getElementById('adminTabButtons').style.display = 'flex';
     } else {
-      document.getElementById('dashTitle').innerText = 'My Property Listings';
+      document.getElementById('dashTitle').innerText = 'My Property Submissions';
       document.getElementById('adminTabButtons').style.display = 'none';
     }
   }
@@ -1105,57 +1095,59 @@
         }
       }
     });
-    loadProperties();
+    loadDashboardProperties();
   }
 
-  function loadProperties() {
+  function loadDashboardProperties() {
     if (!currentUser) return;
-    jsonp(`${SCRIPT_URL}?action=getUserProperties&userId=${currentUser.userId}&email=${encodeURIComponent(currentUser.email)}`)
+    jsonp(`${SCRIPT_URL}?action=getUserProperties&userId=${encodeURIComponent(currentUser.userId)}&email=${encodeURIComponent(currentUser.email)}`)
     .then(data => {
       const tbody = document.getElementById('dashPropList');
       tbody.innerHTML = '';
       
       let props = data && data.properties ? data.properties : [];
-      const isAdmin = currentUser.role === 'ADMIN' || currentUser.email === 'theluckyrealtors@gmail.com';
+      const isAdmin = (currentUser.role === 'ADMIN' || currentUser.email === ADMIN_EMAIL);
 
       if (isAdmin) {
         if (currentAdminTab === 'admin') {
-          // Filter properties submitted by admin (theluckyrealtors@gmail.com)
-          props = props.filter(p => p.ownerEmail === 'theluckyrealtors@gmail.com');
+          props = props.filter(p => p.source === 'Admin Properties');
         } else if (currentAdminTab === 'vendor') {
-          // Filter properties submitted by vendors (not admin)
-          props = props.filter(p => p.ownerEmail !== 'theluckyrealtors@gmail.com');
+          props = props.filter(p => p.source === 'vendor properties');
         }
-        // 'all' keeps all properties
       }
 
       if (props.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No properties found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No properties found in this section.</td></tr>';
         return;
       }
 
       props.forEach(prop => {
-        const isVendorProp = prop.ownerEmail !== 'theluckyrealtors@gmail.com';
+        const isVendorProp = (prop.source === 'vendor properties');
         const currentStatus = prop.status || 'Pending';
         
         let statusColor = 'green';
-        if (currentStatus.toLowerCase() === 'pending') statusColor = '#a82323';
-        else if (currentStatus.toLowerCase() === 'sold') statusColor = '#a82323';
+        if (currentStatus.toLowerCase() === 'pending') statusColor = '#8a6a30';
+        else if (currentStatus.toLowerCase() === 'rejected' || currentStatus.toLowerCase() === 'sold') statusColor = '#a82323';
 
         let actionButtons = '';
-        if (isAdmin && isVendorProp) {
-          // Admin actions for vendor properties: Approve, Mark Sold/Available, Delete
-          actionButtons = `
-            <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', 'Approved')" style="background:#176b49; margin-bottom:4px;">Approve</button>
-            <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', 'Sold')" style="background:#8d6a2e; margin-bottom:4px;">Mark Sold</button>
-            <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', 'Available')" style="background:#102c25; margin-bottom:4px;">Mark Available</button>
-            <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
-          `;
+        if (isAdmin) {
+          if (isVendorProp) {
+            actionButtons = `
+              <button class="btn small success" onclick="updatePropStatus('${prop.propertyId}', 'Approved')" style="margin-bottom:4px;">Approve</button>
+              <button class="btn small danger" onclick="updatePropStatus('${prop.propertyId}', 'Rejected')" style="margin-bottom:4px;">Reject</button>
+              <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', 'Sold')" style="background:#8d6a2e; margin-bottom:4px;">Mark Sold</button>
+              <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', 'Available')" style="background:#102c25; margin-bottom:4px;">Mark Available</button>
+              <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
+            `;
+          } else {
+            const nextStatus = (currentStatus === 'Sold') ? 'Available' : 'Sold';
+            actionButtons = `
+              <button class="btn small dark" onclick="updatePropStatus('${prop.propertyId}', '${nextStatus}')">Mark ${nextStatus}</button>
+              <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
+            `;
+          }
         } else {
-          // Standard toggle / delete
-          const nextStatus = (currentStatus === 'Sold') ? 'Available' : 'Sold';
           actionButtons = `
-            <button class="btn small dark" onclick="toggleStatus('${prop.propertyId}', '${nextStatus}')">Mark ${nextStatus}</button>
             <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
           `;
         }
@@ -1163,7 +1155,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><b>${prop.propertyId}</b></td>
-          <td>${prop.title} <br><small style="color:#777;">By: ${prop.ownerName || prop.ownerEmail || 'Admin'}</small></td>
+          <td>${prop.title} <br><small style="color:#777;">From: ${prop.source} | By: ${prop.ownerName || prop.ownerEmail}</small></td>
           <td>${prop.location || prop.city || 'N/A'}</td>
           <td>${prop.price}</td>
           <td><span style="color:${statusColor}; font-weight:bold;">${currentStatus}</span></td>
@@ -1176,25 +1168,20 @@
   }
 
   function updatePropStatus(propId, newStatus) {
-    const targetUrl = `${SCRIPT_URL}?action=updatePropertyStatus&propertyId=${propId}&status=${encodeURIComponent(newStatus)}&userId=${currentUser.userId}&email=${encodeURIComponent(currentUser.email)}`;
+    const targetUrl = `${SCRIPT_URL}?action=updatePropertyStatus&propertyId=${encodeURIComponent(propId)}&status=${encodeURIComponent(newStatus)}&userId=${encodeURIComponent(currentUser.userId)}&email=${encodeURIComponent(currentUser.email)}`;
     jsonp(targetUrl)
       .then(data => {
         if(data && data.ok) {
-          loadProperties();
-          jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; } });
+          loadDashboardProperties();
+          refreshPublicData();
           alert(`Property status updated to ${newStatus}.`);
         } else {
-          alert('Could not update property status.');
+          alert(data.message || 'Could not update property status.');
         }
       })
       .catch(err => console.error(err));
   }
 
-  function toggleStatus(propId, newStatus) {
-    updatePropStatus(propId, newStatus);
-  }
-
-  // Submit Property Handler with Phone Number Validation on Description & Approval Notice
   document.getElementById('submitPropertyForm').addEventListener('submit', function(e) {
     e.preventDefault();
     if (!currentUser) {
@@ -1237,8 +1224,8 @@
       submitBtn.innerText = originalText;
       submitBtn.disabled = false;
       document.getElementById('submitPropertyForm').reset();
-      loadProperties();
-      jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; } });
+      loadDashboardProperties();
+      refreshPublicData();
 
       const waText = `Hello Admin, a new property has been uploaded by vendor ${currentUser.fullName} (${currentUser.email}) and needs your verification & approval:\n\nTitle: ${propTitle}\nType: ${propType}\nCity: ${propCity}\nPrice: ${propPrice}\nPhone: ${propPhone}`;
       showSuccessModal('Property Submitted Successfully!', 'Your property has been submitted and is currently pending admin approval. Once verified and approved by the admin, it will go live on the website.', waText);
@@ -1247,13 +1234,15 @@
 
   function deleteProp(propId) {
     if (confirm('Are you sure you want to delete this property listing?')) {
-      const targetUrl = `${SCRIPT_URL}?action=deleteProperty&propertyId=${propId}&userId=${currentUser.userId}&email=${encodeURIComponent(currentUser.email)}`;
+      const targetUrl = `${SCRIPT_URL}?action=deleteProperty&propertyId=${encodeURIComponent(propId)}&userId=${encodeURIComponent(currentUser.userId)}&email=${encodeURIComponent(currentUser.email)}`;
       jsonp(targetUrl)
         .then(data => {
           if (data && data.ok) {
-            loadProperties();
-            jsonp(SCRIPT_URL).then(d => { if(d && d.properties) { allProperties = d.properties; } });
+            loadDashboardProperties();
+            refreshPublicData();
             alert('Property deleted successfully.');
+          } else {
+            alert(data.message || 'Error deleting property.');
           }
         })
         .catch(err => console.error(err));
