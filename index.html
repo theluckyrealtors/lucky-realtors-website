@@ -46,7 +46,6 @@
     
     nav { display: flex; align-items: center; gap: 22px; font-size: 12px; font-weight: 600; }
     nav a:hover { color: #8d6a2e; }
-
     /* Contact Dropdown Styles */
     .dropdown { position: relative; display: inline-block; }
     .dropbtn { background: none; border: none; font: inherit; font-weight: 600; cursor: pointer; color: inherit; padding: 0; display: flex; align-items: center; gap: 4px; }
@@ -56,7 +55,6 @@
     .dropdown-content a:last-child { border-bottom: none; }
     .dropdown-content a:hover { background-color: #eee5d2; color: #8d6a2e; }
     .dropdown.show .dropdown-content { display: block; }
-
     .btn { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--gold); padding: 13px 19px; background: var(--gold); color: #17231c; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: .2s; }
     .btn:hover { background: #d8bd87; }
     .btn.outline { background: transparent; color: var(--ivory); border-color: #9d895e; }
@@ -94,7 +92,6 @@
     .board-role { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: block; }
     .board-card blockquote { font-style: italic; font-size: 12px; line-height: 1.6; color: var(--green2); background: #eae3d5; padding: 12px 15px; border-left: 3px solid var(--gold); margin: 0 0 15px 0; text-align: left; border-radius: 2px; }
     .board-card p { font-size: 12px; color: #555; line-height: 1.7; margin: 0; text-align: left; }
-
     .categories { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 28px; }
     .category { height: 185px; position: relative; display: flex; align-items: end; padding: 18px; color: white; background-size: cover; background-position: center; }
     .category:before { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent, rgba(4,20,16,.82)); }
@@ -487,10 +484,8 @@
       </div>
     </div>
   </section>
-
   <!-- UPDATED ABOUT US & LEADERSHIP SECTION WITH 7 MEMBERS IN EXACT ORDER -->
   <section class="section about-bg" id="about">
-    <section class="section about-bg" id="about">
     <div class="section-label">08 / ABOUT US & LEADERSHIP</div>
     <h2>Two decades of <em>trusted expertise.</em></h2>
     <p class="section-desc">With over <strong>20+ years of industry experience</strong>, THE LUCKY REALTORS is a premier real estate advisory bridging key markets across India and Dubai.</p>
@@ -504,7 +499,6 @@
         <blockquote>"Building lasting value starts with vision and total transparency in every transaction."</blockquote>
         <p>Leads international property portfolios, driving brand expansion and strategic alliances across India and Dubai.</p>
       </div>
-
       <!-- 2nd: Mohemmad -->
       <div class="board-card">
         <img src="Mohemmad.png" alt="Mohemmad" class="leader-avatar">
@@ -513,7 +507,6 @@
         <blockquote>"Real estate is about more than property; it’s about creating sustainable wealth for generations."</blockquote>
         <p>The foundational force behind our enterprise, steering deep market intelligence and land acquisition strategy.</p>
       </div>
-
       <!-- 3rd: Yogesh -->
       <div class="board-card">
         <img src="Yogesh.png" alt="Yogesh" class="leader-avatar">
@@ -522,7 +515,6 @@
         <blockquote>"Sound financial planning transforms real estate opportunities into resilient assets."</blockquote>
         <p>Manages capital structuring, risk mitigation, and financial modeling for large land parcels and developments.</p>
       </div>
-
       <!-- 4th: Umesh Deshmukh -->
       <div class="board-card">
         <img src="Umesh%20Deshmukh.png" alt="Umesh Deshmukh" class="leader-avatar">
@@ -531,7 +523,6 @@
         <blockquote>"Every successful property journey begins with understanding, trust, and the right guidance."</blockquote>
         <p>Directs sales strategies and client advisory relations across prime residential and land portfolios.</p>
       </div>
-
       <!-- 5th: Samir Kazi -->
       <div class="board-card">
         <img src="Samir%20Kazi.png" alt="Samir Kazi" class="leader-avatar">
@@ -540,7 +531,6 @@
         <blockquote>"Operational excellence and client-first service define our brand’s reliability."</blockquote>
         <p>Oversees daily execution, client engagement frameworks, and seamless deal progression from start to finish.</p>
       </div>
-
       <!-- 6th: Affan -->
       <div class="board-card">
         <img src="Affan.png" alt="Affan" class="leader-avatar">
@@ -549,7 +539,6 @@
         <blockquote>"Connecting the right investors with the right opportunities requires clarity and vision."</blockquote>
         <p>Directs global marketing campaigns, buyer outreach, and brand positioning across international borders.</p>
       </div>
-
       <!-- 7th: Sid -->
       <div class="board-card">
         <img src="Sid.png" alt="Sid" class="leader-avatar">
@@ -560,7 +549,6 @@
       </div>
     </div>
   </section>
-
   <section class="section contact" id="contact">
     <div>
       <div class="section-label">09 / GET IN TOUCH</div>
@@ -595,7 +583,7 @@
     <p>© 2026 THE LUCKY REALTORS. All rights reserved.</p>
     <p>Register your property here and get access to free of cost life time free account buying or selling</p>
     <div class="footer-links">
-      <a href="#about">Privacy Policy</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
       <a href="#about">Terms of Service</a>
     </div>
   </div>
@@ -704,13 +692,11 @@
   let currentUser = null;
   let publicProperties = [];
   let currentAdminTab = 'all';
-
   const menuBtn = document.getElementById('menuBtn');
   const nav = document.getElementById('nav');
   if(menuBtn && nav) {
     menuBtn.addEventListener('click', () => { nav.classList.toggle('open'); });
   }
-
   // Contact Dropdown Toggle & Outside Click Handlers
   const contactDropBtn = document.getElementById('contactDropBtn');
   const contactDropdown = document.getElementById('contactDropdown');
@@ -726,7 +712,6 @@
   function closeContactDropdown() {
     if(contactDropdown) contactDropdown.classList.remove('show');
   }
-
   const authBtn = document.getElementById('authBtn');
   if (authBtn) {
     authBtn.addEventListener('click', (e) => {
