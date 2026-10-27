@@ -12,7 +12,6 @@
   <meta property="og:image" content="https://theluckyrealtors.com/Suleman.png">
   <meta property="og:url" content="https://www.theluckyrealtors.com/">
   <meta name="twitter:card" content="summary_large_image">
-
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23123b2c'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-family='Georgia, serif' font-size='65' font-weight='bold' fill='%23c8a86b'>L</text></svg>">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +19,6 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="Suleman.png" fetchpriority="high">
-
   <title>THE LUCKY REALTORS | Property, With Possibility</title>
   
   <style>
@@ -34,13 +32,11 @@
       --line: #dfd9cc;
       --white: #fff;
     }
-
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { margin: 0; background: var(--ivory); color: var(--ink); font-family: Inter, Arial, sans-serif; }
     a { color: inherit; text-decoration: none; }
     button, input, select, textarea { font: inherit; }
-
     .topbar { padding: 10px 5%; background: #0a201b; color: #d6c7a3; display: flex; justify-content: space-between; gap: 10px; font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; }
     .header { padding: 19px 5%; display: flex; align-items: center; justify-content: space-between; background: var(--ivory); position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--line); }
     .brand { display: flex; align-items: center; gap: 12px; }
@@ -50,6 +46,16 @@
     
     nav { display: flex; align-items: center; gap: 22px; font-size: 12px; font-weight: 600; }
     nav a:hover { color: #8d6a2e; }
+
+    /* Contact Dropdown Styles */
+    .dropdown { position: relative; display: inline-block; }
+    .dropbtn { background: none; border: none; font: inherit; font-weight: 600; cursor: pointer; color: inherit; padding: 0; display: flex; align-items: center; gap: 4px; }
+    .dropbtn:hover { color: #8d6a2e; }
+    .dropdown-content { display: none; position: absolute; right: 0; background-color: var(--ivory); min-width: 170px; box-shadow: 0 12px 30px rgba(16,44,37,0.12); border: 1px solid var(--line); z-index: 20; }
+    .dropdown-content a { color: var(--ink); padding: 12px 16px; text-decoration: none; display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--line); }
+    .dropdown-content a:last-child { border-bottom: none; }
+    .dropdown-content a:hover { background-color: #eee5d2; color: #8d6a2e; }
+    .dropdown.show .dropdown-content { display: block; }
 
     .btn { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--gold); padding: 13px 19px; background: var(--gold); color: #17231c; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: .2s; }
     .btn:hover { background: #d8bd87; }
@@ -61,7 +67,6 @@
     .btn.success { background: #176b49; color: white; border-color: #176b49; padding: 6px 10px; font-size: 10px; }
     .btn.whatsapp { background: #176b49; color: white; border-color: #176b49; padding: 10px 14px; font-size: 10px; margin-top: 10px; width: 100%; display: inline-flex; gap: 6px; align-items: center; justify-content: center; }
     .menu { display: none; background: none; border: 0; font-size: 24px; cursor: pointer; }
-
     .hero { min-height: 590px; position: relative; display: flex; align-items: center; color: white; background: linear-gradient(90deg, rgba(8,29,24,.93), rgba(8,29,24,.66) 48%, rgba(8,29,24,.08)), url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=85') center/cover; }
     .hero-inner { padding: 90px 7%; max-width: 780px; }
     .eyebrow, .section-label { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); font-weight: 700; }
@@ -70,32 +75,30 @@
     .hero p { font-size: 15px; line-height: 1.9; color: #e0e2dc; max-width: 550px; }
     .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
     .hero-badge { position: absolute; right: 5%; bottom: 32px; border: 1px solid #bfa66f; padding: 17px 21px; background: #102c25cc; font-size: 10px; letter-spacing: 1.5px; line-height: 1.8; }
-
     .trust { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--green); color: #eee5d2; padding: 25px 6%; gap: 18px; }
     .trust div { text-align: center; border-right: 1px solid #476055; }
     .trust div:last-child { border: 0; }
     .trust strong { display: block; font: 600 25px 'Cormorant Garamond', serif; color: var(--gold); }
     .trust span { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
-
     .section { padding: 85px 6%; }
     .intro { display: grid; grid-template-columns: .7fr 1.3fr; gap: 50px; align-items: start; }
     .section h2 { font: 500 clamp(36px, 4vw, 55px)/1.05 'Cormorant Garamond', serif; margin: 15px 0 18px; }
     .intro p, .section-desc { color: #646960; line-height: 1.9; font-size: 14px; max-width: 730px; }
-
+    
+    /* Updated Circular Team Profiles Styles */
     .about-bg { background: #fffdf8; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .board-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 35px; }
-    .board-card { background: var(--ivory); border: 1px solid var(--line); padding: 25px; transition: transform 0.2s ease; }
-    .board-card:hover { transform: translateY(-3px); }
+    .board-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 45px; }
+    .board-card { text-align: center; background: transparent; padding: 10px; }
+    .leader-avatar { width: 175px; height: 175px; border-radius: 50%; object-fit: cover; object-position: top center; margin: 0 auto 20px; border: 3px solid var(--gold); box-shadow: 0 8px 25px rgba(0,0,0,0.1); display: block; background: #d9d6ca; }
     .board-card h3 { font: 600 24px 'Cormorant Garamond', serif; margin: 0 0 4px; color: var(--green); }
     .board-role { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: block; }
-    .board-card blockquote { font-style: italic; font-size: 12px; line-height: 1.6; color: var(--green2); background: #eae3d5; padding: 10px 12px; border-left: 3px solid var(--gold); margin: 0 0 12px 0; }
-    .board-card p { font-size: 12px; color: #555; line-height: 1.7; margin: 0; }
+    .board-card blockquote { font-style: italic; font-size: 12px; line-height: 1.6; color: var(--green2); background: #eae3d5; padding: 12px 15px; border-left: 3px solid var(--gold); margin: 0 0 15px 0; text-align: left; border-radius: 2px; }
+    .board-card p { font-size: 12px; color: #555; line-height: 1.7; margin: 0; text-align: left; }
 
     .categories { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 28px; }
     .category { height: 185px; position: relative; display: flex; align-items: end; padding: 18px; color: white; background-size: cover; background-position: center; }
     .category:before { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent, rgba(4,20,16,.82)); }
     .category span { position: relative; font: 600 20px 'Cormorant Garamond', serif; }
-
     .listing-wrap { background: #fffdf8; }
     .section-head { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: 28px; }
     .filters { display: grid; grid-template-columns: repeat(4, minmax(130px, 1fr)) minmax(170px, 1.2fr) auto auto; gap: 12px; padding: 20px; background: linear-gradient(135deg, #f3efe6, #ebe4d7); border: 1px solid var(--line); margin-bottom: 25px; box-shadow: 0 12px 30px rgba(16,44,37,.045); }
@@ -116,53 +119,43 @@
     .meta { display: flex; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 13px; font-size: 10px; color: #686b62; }
     .property-body .btn { margin-top: 17px; width: 100%; }
     .status { font-size: 12px; color: var(--muted); padding: 15px 0; }
-
     .dashboard { background: #fffdf8; border: 1px solid var(--line); margin: 40px 6%; padding: 30px; display: none; }
     .dashboard.active { display: block; }
     .user-badge { display: flex; justify-content: space-between; align-items: center; background: var(--green); color: white; padding: 20px; margin-bottom: 25px; }
     .user-badge h3 { font: 600 24px 'Cormorant Garamond', serif; margin: 0 0 5px; color: var(--gold); }
     .user-badge p { margin: 0; font-size: 12px; color: #d4ddd5; }
-
     .prop-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
     .prop-table th, .prop-table td { padding: 12px; border: 1px solid var(--line); text-align: left; }
     .prop-table th { background: #ebe4d7; font-weight: 700; text-transform: uppercase; font-size: 10px; }
-
     .requirements { background: var(--green); color: white; }
     .requirements .section-desc { color: #d4ddd5; }
-
     .submit-prop-sec { background: var(--ivory); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-
     .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
     .feature { display: grid; grid-template-columns: 43% 57%; background: #fffdf8; border: 1px solid var(--line); }
     .feature img { width: 100%; height: 100%; min-height: 245px; object-fit: cover; }
     .feature > div { padding: 25px; }
     .feature h3 { font: 500 30px 'Cormorant Garamond', serif; margin: 10px 0; }
     .feature p { font-size: 12px; line-height: 1.8; color: #6a6d65; }
-
     .contact { background: #eae3d5; display: grid; grid-template-columns: 1fr 1fr; gap: 35px; align-items: start; }
     .contact-panel { padding: 28px; background: var(--ivory); border: 1px solid var(--line); }
     .contact-panel p { font-size: 12px; color: var(--muted); line-height: 1.8; }
-
     .offices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
     .office-card { background: var(--ivory); border: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; }
     .office-card h4 { font: 600 20px 'Cormorant Garamond', serif; margin: 0 0 8px; color: var(--green); }
     .office-card p { font-size: 12px; color: #555; line-height: 1.6; margin-bottom: 12px; }
     .map-frame { width: 100%; height: 180px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; margin-top: auto; }
     .map-frame iframe { width: 100%; height: 100%; border: 0; }
-
     .footer { background: #081d18; color: #d8d2c3; padding: 35px 6%; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 10px; letter-spacing: 1.5px; }
     .footer b { font: 600 22px 'Cormorant Garamond', serif; color: var(--gold); }
     .footer-links { display: flex; gap: 15px; margin-top: 10px; font-size: 11px; }
     .footer-links a { color: var(--gold); text-decoration: underline; }
     .float { position: fixed; right: 20px; bottom: 20px; z-index: 11; border-radius: 50%; width: 54px; height: 54px; display: grid; place-items: center; background: #176b49; color: white; font-size: 22px; box-shadow: 0 5px 25px #0003; }
-
     .modal { position: fixed; inset: 0; background: #071a16b8; display: none; align-items: center; justify-content: center; padding: 18px; z-index: 30; }
     .modal.open { display: flex; }
     .modal-box { background: var(--ivory); width: min(560px, 100%); max-height: 90vh; overflow: auto; padding: 30px; position: relative; box-shadow: 0 20px 80px #0004; }
     .modal-box h2 { font: 500 38px 'Cormorant Garamond', serif; margin: 8px 0; }
     .modal-box p { font-size: 12px; color: #6d7068; line-height: 1.7; }
     .close { position: absolute; right: 15px; top: 13px; border: 0; background: none; font-size: 25px; cursor: pointer; }
-
     .form { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
     .form .full { grid-column: 1/-1; }
     .form textarea { min-height: 85px; resize: vertical; }
@@ -171,20 +164,17 @@
     .phone-group input { width: 58%; }
     .notice { font-size: 11px!important; color: #8a6a30!important; }
     .empty { grid-column: 1/-1; text-align: center; padding: 30px; background: #f5f1e8; color: #777; }
-
     .auth-tabs { display: flex; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
     .auth-tab { flex: 1; padding: 12px; background: none; border: none; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; }
     .auth-tab.active { color: var(--green); border-bottom-color: var(--gold); background: #f0ebe1; }
     .auth-view { display: none; }
     .auth-view.active { display: grid; }
     .link-btn { background: none; border: none; padding: 0; font-size: 11px; color: var(--gold); cursor: pointer; text-decoration: underline; }
-
     .success-modal { position: fixed; inset: 0; background: rgba(8,29,24,0.85); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
     .success-modal.open { display: flex; }
     .success-box { background: var(--ivory); border: 2px solid var(--gold); width: min(500px, 100%); padding: 35px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
     .success-box h2 { font: 600 32px 'Cormorant Garamond', serif; color: var(--green); margin-bottom: 12px; }
     .success-box p { font-size: 13px; line-height: 1.8; color: #444; margin-bottom: 24px; }
-
     @media(max-width: 900px) {
       nav { gap: 12px; font-size: 10px; }
       .categories { grid-template-columns: repeat(3, 1fr); }
@@ -195,7 +185,6 @@
       .trust div:nth-child(2) { border: 0; }
       .hero-badge { display: none; }
     }
-
     @media(max-width: 650px) {
       .topbar { font-size: 9px; }
       .header { padding: 14px 5%; }
@@ -214,16 +203,15 @@
       .form .full { grid-column: auto; }
       .trust { padding: 22px 4%; }
       .trust strong { font-size: 22px; }
+      .board-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-
 <div class="topbar">
   <span>INDIA · DUBAI · GLOBAL OPPORTUNITIES</span>
   <span>PRIVATE. PERSONAL. PROPERTY.</span>
 </div>
-
 <header class="header">
   <a class="brand" href="#home">
     <span class="monogram">L</span>
@@ -237,13 +225,17 @@
     <a href="#categories">Collections</a>
     <a href="#requirements">Buyer Requirements</a>
     <a href="#partners">Landowners & JV</a>
-    <a href="#contact">Contact</a>
+    <div class="dropdown" id="contactDropdown">
+      <button class="dropbtn" id="contactDropBtn" aria-haspopup="true" aria-expanded="false">Contact ▾</button>
+      <div class="dropdown-content">
+        <a href="#contact" onclick="closeContactDropdown()">Locate Us</a>
+        <a href="#about" onclick="closeContactDropdown()">Management Team</a>
+      </div>
+    </div>
     <button class="btn small" id="authBtn">Sign in / Register</button>
   </nav>
 </header>
-
 <main id="home">
-
   <section class="hero">
     <div class="hero-inner">
       <div class="eyebrow">A MORE CONSIDERED WAY TO INVEST</div>
@@ -256,14 +248,12 @@
     </div>
     <div class="hero-badge">CURATED OPPORTUNITIES<br><span>LAND · RESIDENTIAL · COMMERCIAL · JV</span></div>
   </section>
-
   <div class="trust">
     <div><strong>20+ Years</strong><span>Industry Experience</span></div>
     <div><strong>India + Dubai</strong><span>Two Key Markets</span></div>
     <div><strong>Land to Luxury</strong><span>Multiple Asset Classes</span></div>
     <div><strong>Direct Advisory</strong><span>By Leadership Board</span></div>
   </div>
-
   <section class="section intro">
     <div>
       <div class="section-label">01 / OUR APPROACH</div>
@@ -274,7 +264,6 @@
       <a href="#contact" class="btn dark">Start a conversation ↗</a>
     </div>
   </section>
-
   <section class="dashboard" id="userDashboard">
     <div class="user-badge">
       <div>
@@ -287,7 +276,6 @@
         <div style="font-size:11px; margin-top:8px;" id="dashId">ID: TLR-USER-000000</div>
       </div>
     </div>
-
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
       <h3 style="font: 600 28px 'Cormorant Garamond', serif; margin:0;" id="dashTitle">Control Panel</h3>
       <div id="adminTabButtons" style="display:none; gap:8px;">
@@ -297,7 +285,6 @@
       </div>
       <a class="btn dark small" href="#submit-property">+ Add New Property</a>
     </div>
-
     <table class="prop-table">
       <thead>
         <tr>
@@ -314,7 +301,6 @@
       </tbody>
     </table>
   </section>
-
   <section class="section" id="categories">
     <div class="section-label">03 / EXPLORE BY COLLECTION</div>
     <h2>Property for <em>every ambition.</em></h2>
@@ -328,7 +314,6 @@
       <a class="category" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80')" href="#properties" data-type="JV Plotting"><span>JV Plotting</span></a>
     </div>
   </section>
-
   <section class="section listing-wrap" id="properties">
     <div class="section-head">
       <div>
@@ -385,11 +370,9 @@
       <button class="btn dark" id="searchBtn" style="height:42px; margin-top:auto;">Search 🔍</button>
       <button class="btn dark" id="clearFilters" style="height:42px; margin-top:auto;">Reset</button>
     </div>
-
     <div class="status" id="listingStatus">Please use the filters above and click Search to view properties.</div>
     <div class="property-grid" id="propertyGrid"></div>
   </section>
-
   <section class="section requirements" id="requirements">
     <div class="section-label">05 / ACTIVE REQUIREMENTS</div>
     <h2>Tell us what you're <em>looking for.</em></h2>
@@ -427,7 +410,6 @@
       </div>
     </form>
   </section>
-
   <section class="section submit-prop-sec" id="submit-property">
     <div class="section-label">06 / LIST YOUR PROPERTY</div>
     <h2>Submit your property <em>details.</em></h2>
@@ -482,7 +464,6 @@
       </div>
     </form>
   </section>
-
   <section class="section" id="partners">
     <div class="section-label">07 / LANDOWNERS & DEVELOPERS</div>
     <h2>Unlock potential through <em>strategic partnerships.</em></h2>
@@ -507,49 +488,70 @@
     </div>
   </section>
 
+  <!-- UPDATED ABOUT US & LEADERSHIP SECTION WITH 7 MEMBERS IN EXACT ORDER -->
   <section class="section about-bg" id="about">
     <div class="section-label">02 / ABOUT US & LEADERSHIP</div>
     <h2>Two decades of <em>trusted expertise.</em></h2>
     <p class="section-desc">With over <strong>20+ years of industry experience</strong>, THE LUCKY REALTORS is a premier real estate advisory bridging key markets across India and Dubai.</p>
     
     <div class="board-grid">
+      <!-- 1st: Suleman Shaikh -->
       <div class="board-card">
-        <img src="Suleman.png" alt="Suleman Shaikh" width="400" height="320" fetchpriority="high" style="width:100%; height:320px; object-fit:cover; object-position: top center; border-radius:4px; margin-bottom:15px;">
+        <img src="Suleman Shaikh.png" alt="Suleman Shaikh" class="leader-avatar" fetchpriority="high">
         <h3>Suleman Shaikh</h3>
         <span class="board-role">Managing Director</span>
         <blockquote>"Building lasting value starts with vision and total transparency in every transaction."</blockquote>
         <p>Leads international property portfolios, driving brand expansion and strategic alliances across India and Dubai.</p>
       </div>
 
+      <!-- 2nd: Mohemmad -->
       <div class="board-card">
+        <img src="Mohemmad.png" alt="Mohemmad" class="leader-avatar">
         <h3>Mohemmad</h3>
         <span class="board-role">Founder</span>
         <blockquote>"Real estate is about more than property; it’s about creating sustainable wealth for generations."</blockquote>
         <p>The foundational force behind our enterprise, steering deep market intelligence and land acquisition strategy.</p>
       </div>
 
+      <!-- 3rd: Yogesh -->
       <div class="board-card">
+        <img src="Yogesh.png" alt="Yogesh" class="leader-avatar">
         <h3>Yogesh</h3>
         <span class="board-role">Chief Financial Officer (CFO)</span>
         <blockquote>"Sound financial planning transforms real estate opportunities into resilient assets."</blockquote>
         <p>Manages capital structuring, risk mitigation, and financial modeling for large land parcels and developments.</p>
       </div>
 
+      <!-- 4th: Umesh Deshmukh -->
       <div class="board-card">
+        <img src="Umesh Deshmukh.png" alt="Umesh Deshmukh" class="leader-avatar">
+        <h3>Umesh Deshmukh</h3>
+        <span class="board-role">CHIEF SALES OFFICER</span>
+        <blockquote>"Every successful property journey begins with understanding, trust, and the right guidance."</blockquote>
+        <p>Directs sales strategies and client advisory relations across prime residential and land portfolios.</p>
+      </div>
+
+      <!-- 5th: Samir Kazi -->
+      <div class="board-card">
+        <img src="Samir Kazi.png" alt="Samir Kazi" class="leader-avatar">
         <h3>Samir Kazi</h3>
         <span class="board-role">Chief Operating Officer (COO)</span>
         <blockquote>"Operational excellence and client-first service define our brand’s reliability."</blockquote>
         <p>Oversees daily execution, client engagement frameworks, and seamless deal progression from start to finish.</p>
       </div>
 
+      <!-- 6th: Affan -->
       <div class="board-card">
+        <img src="Affan.png" alt="Affan" class="leader-avatar">
         <h3>Affan</h3>
         <span class="board-role">Chief Marketing Officer (CMO)</span>
         <blockquote>"Connecting the right investors with the right opportunities requires clarity and vision."</blockquote>
         <p>Directs global marketing campaigns, buyer outreach, and brand positioning across international borders.</p>
       </div>
 
+      <!-- 7th: Sid -->
       <div class="board-card">
+        <img src="Sid.png" alt="Sid" class="leader-avatar">
         <h3>Sid</h3>
         <span class="board-role">Director of Operations</span>
         <blockquote>"Efficiency and detail-oriented execution ensure every deal completes smoothly."</blockquote>
@@ -585,9 +587,7 @@
       </div>
     </div>
   </section>
-
 </main>
-
 <footer class="footer">
   <div>
     <b>THE LUCKY REALTORS</b>
@@ -602,9 +602,7 @@
     <p><a href="https://www.theluckyrealtors.com" rel="noopener" target="_blank">www.theluckyrealtors.com</a></p>
   </div>
 </footer>
-
 <a href="#contact" class="float" aria-label="Contact via WhatsApp or Phone">💬</a>
-
 <div class="success-modal" id="successModal">
   <div class="success-box">
     <h2 id="successTitle">Submission Successful!</h2>
@@ -615,7 +613,6 @@
     <button class="btn dark" onclick="closeSuccessModal()" style="width:100%;">OK, Continue</button>
   </div>
 </div>
-
 <div class="modal" id="registerModal" role="dialog" aria-modal="true" aria-label="Authentication Modal">
   <div class="modal-box">
     <button class="close" data-close aria-label="Close Modal">×</button>
@@ -625,7 +622,6 @@
       <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
       <button class="auth-tab" onclick="switchAuthTab('forgot')">Forgot Password</button>
     </div>
-
     <form class="form auth-view active" id="loginForm">
       <div class="full">
         <label for="loginEmail">Email Address</label>
@@ -642,7 +638,6 @@
         <button type="submit" class="btn dark" style="width:100%;">Sign In</button>
       </div>
     </form>
-
     <form class="form auth-view" id="registerForm">
       <div class="full">
         <label for="regName">Full Name</label>
@@ -676,7 +671,6 @@
         <button type="submit" class="btn dark" style="width:100%;">Create Account</button>
       </div>
     </form>
-
     <div class="auth-view" id="forgotView" style="display:none; flex-direction:column; gap:13px;">
       <p>Enter your registered email address to receive an OTP for password reset.</p>
       <div>
@@ -686,7 +680,6 @@
       <div>
         <button type="button" class="btn dark" onclick="requestOTP()" style="width:100%;">Send OTP ↗</button>
       </div>
-
       <div id="otpSection" style="display:none; margin-top:15px; border-top:1px solid var(--line); padding-top:15px; flex-direction:column; gap:13px;">
         <div>
           <label for="forgotOtp">Enter 6-Digit OTP</label>
@@ -701,15 +694,12 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>
-
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwg9cshheucmpZmju0Vg-ilacEzvo5dMsnORCIR2oqhUpByR0rNMFAwAGUMQzsYCBs/exec';
   const ADMIN_EMAIL = 'theluckyrealtors@gmail.com';
   const ADMIN_WHATSAPP = '918788843016';
-
   let currentUser = null;
   let publicProperties = [];
   let currentAdminTab = 'all';
@@ -718,6 +708,22 @@
   const nav = document.getElementById('nav');
   if(menuBtn && nav) {
     menuBtn.addEventListener('click', () => { nav.classList.toggle('open'); });
+  }
+
+  // Contact Dropdown Toggle & Outside Click Handlers
+  const contactDropBtn = document.getElementById('contactDropBtn');
+  const contactDropdown = document.getElementById('contactDropdown');
+  if(contactDropBtn && contactDropdown) {
+    contactDropBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      contactDropdown.classList.toggle('show');
+    });
+    window.addEventListener('click', () => {
+      contactDropdown.classList.remove('show');
+    });
+  }
+  function closeContactDropdown() {
+    if(contactDropdown) contactDropdown.classList.remove('show');
   }
 
   const authBtn = document.getElementById('authBtn');
@@ -740,20 +746,17 @@
       }
     });
   }
-
   document.querySelectorAll('[data-modal]').forEach(btn => {
     btn.addEventListener('click', () => {
       const modal = document.getElementById(btn.getAttribute('data-modal'));
       if(modal) modal.classList.add('open');
     });
   });
-
   document.querySelectorAll('[data-close]').forEach(btn => {
     btn.addEventListener('click', () => {
       btn.closest('.modal').classList.remove('open');
     });
   });
-
   function showSuccessModal(title, message, whatsappText = '') {
     document.getElementById('successTitle').innerText = title;
     document.getElementById('successMessage').innerText = message;
@@ -767,18 +770,15 @@
     }
     document.getElementById('successModal').classList.add('open');
   }
-
   function closeSuccessModal() {
     document.getElementById('successModal').classList.remove('open');
   }
-
   function switchAuthTab(tab) {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.auth-view').forEach(v => {
       v.classList.remove('active');
       v.style.display = 'none';
     });
-
     if(tab === 'signin') {
       document.querySelectorAll('.auth-tab')[0].classList.add('active');
       const view = document.getElementById('loginForm');
@@ -796,7 +796,6 @@
       view.style.display = 'flex';
     }
   }
-
   function jsonp(url) {
     return new Promise((resolve, reject) => {
       const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
@@ -815,7 +814,6 @@
       document.body.appendChild(script);
     });
   }
-
   function submitToAppsScript(params) {
     return new Promise((resolve) => {
       const iframeName = 'hidden_iframe_' + Math.floor(Math.random() * 1000000);
@@ -823,12 +821,10 @@
       iframe.name = iframeName;
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
-
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = SCRIPT_URL;
       form.target = iframeName;
-
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
           const input = document.createElement('input');
@@ -838,7 +834,6 @@
           form.appendChild(input);
         }
       }
-
       document.body.appendChild(form);
       
       iframe.onload = function() {
@@ -848,11 +843,9 @@
           resolve({ ok: true });
         }, 500);
       };
-
       form.submit();
     });
   }
-
   function refreshPublicData() {
     jsonp(`${SCRIPT_URL}?action=getPublicListings`)
       .then(data => {
@@ -862,18 +855,15 @@
       })
       .catch(err => console.error('Error fetching public listings:', err));
   }
-
   window.addEventListener('DOMContentLoaded', () => {
     refreshPublicData();
   });
-
   document.getElementById('searchBtn').addEventListener('click', () => {
     const country = document.getElementById('countryFilter').value.toLowerCase();
     const type = document.getElementById('typeFilter').value.toLowerCase();
     const purpose = document.getElementById('purposeFilter').value.toLowerCase();
     const status = document.getElementById('statusFilter').value.toLowerCase();
     const search = document.getElementById('searchFilter').value.toLowerCase();
-
     const filtered = publicProperties.filter(p => {
       if(country && !(p.country || '').toLowerCase().includes(country)) return false;
       if(type && !(p.type || '').toLowerCase().includes(type)) return false;
@@ -882,11 +872,9 @@
       if(search && !(p.title + ' ' + (p.city || p.location || '')).toLowerCase().includes(search)) return false;
       return true;
     });
-
     renderProperties(filtered);
     document.getElementById('listingStatus').innerText = `Found ${filtered.length} matching properties.`;
   });
-
   document.getElementById('clearFilters').addEventListener('click', () => {
     document.getElementById('countryFilter').value = '';
     document.getElementById('typeFilter').value = '';
@@ -896,7 +884,6 @@
     document.getElementById('propertyGrid').innerHTML = '';
     document.getElementById('listingStatus').innerText = 'Please use the filters above and click Search to view properties.';
   });
-
   function renderProperties(list) {
     const grid = document.getElementById('propertyGrid');
     grid.innerHTML = '';
@@ -926,7 +913,6 @@
       grid.appendChild(div);
     });
   }
-
   const reqForm = document.getElementById('reqForm');
   if(reqForm) {
     reqForm.addEventListener('submit', function(e) {
@@ -935,12 +921,10 @@
       const originalText = submitBtn.innerText;
       submitBtn.innerText = 'Submitting...';
       submitBtn.disabled = true;
-
       const fullName = document.getElementById('reqName').value;
       const phone = document.getElementById('reqCountryCode').value + ' ' + document.getElementById('reqPhone').value;
       const location = document.getElementById('reqLocation').value || 'N/A';
       const desc = document.getElementById('reqDetails').value;
-
       submitToAppsScript({
         formType: 'requirement',
         fullName: fullName,
@@ -957,15 +941,12 @@
       });
     });
   }
-
   document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
     btn.innerText = 'Signing in...';
-
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-
     jsonp(`${SCRIPT_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`)
       .then(data => {
         btn.innerText = 'Sign In';
@@ -985,18 +966,15 @@
         alert('Connection error. Please try again.');
       });
   });
-
   document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
     btn.innerText = 'Creating account...';
-
     const fullName = document.getElementById('regName').value;
     const firmName = document.getElementById('regFirm').value || 'Vendor';
     const email = document.getElementById('regEmail').value;
     const phone = document.getElementById('regCountryCode').value + ' ' + document.getElementById('regPhone').value;
     const password = document.getElementById('regPassword').value;
-
     jsonp(`${SCRIPT_URL}?action=register&fullName=${encodeURIComponent(fullName)}&firmName=${encodeURIComponent(firmName)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`)
       .then(data => {
         btn.innerText = 'Create Account';
@@ -1016,7 +994,6 @@
         alert('Connection error. Please try again.');
       });
   });
-
   function requestOTP() {
     const email = document.getElementById('forgotEmail').value;
     if(!email) {
@@ -1037,17 +1014,14 @@
         alert('Error sending OTP.');
       });
   }
-
   function verifyAndResetPassword() {
     const email = document.getElementById('forgotEmail').value;
     const otp = document.getElementById('forgotOtp').value;
     const newPassword = document.getElementById('newPassword').value;
-
     if(!otp || !newPassword) {
       alert('Please enter both OTP and new password.');
       return;
     }
-
     jsonp(`${SCRIPT_URL}?action=resetPassword&email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}&newPassword=${encodeURIComponent(newPassword)}`)
       .then(data => {
         if(data && data.ok) {
@@ -1062,7 +1036,6 @@
         alert('Error resetting password.');
       });
   }
-
   function setupDashboard(user) {
     document.getElementById('authBtn').innerText = 'Logout';
     document.getElementById('userDashboard').classList.add('active');
@@ -1080,7 +1053,6 @@
       document.getElementById('adminTabButtons').style.display = 'none';
     }
   }
-
   function switchAdminTab(tab) {
     currentAdminTab = tab;
     ['all', 'admin', 'vendor'].forEach(t => {
@@ -1097,7 +1069,6 @@
     });
     loadDashboardProperties();
   }
-
   function loadDashboardProperties() {
     if (!currentUser) return;
     jsonp(`${SCRIPT_URL}?action=getUserProperties&userId=${encodeURIComponent(currentUser.userId)}&email=${encodeURIComponent(currentUser.email)}`)
@@ -1107,7 +1078,6 @@
       
       let props = data && data.properties ? data.properties : [];
       const isAdmin = (currentUser.role === 'ADMIN' || currentUser.email === ADMIN_EMAIL);
-
       if (isAdmin) {
         if (currentAdminTab === 'admin') {
           props = props.filter(p => p.source === 'Admin Properties');
@@ -1115,12 +1085,10 @@
           props = props.filter(p => p.source === 'vendor properties');
         }
       }
-
       if (props.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No properties found in this section.</td></tr>';
         return;
       }
-
       props.forEach(prop => {
         const isVendorProp = (prop.source === 'vendor properties');
         const currentStatus = prop.status || 'Pending';
@@ -1128,7 +1096,6 @@
         let statusColor = 'green';
         if (currentStatus.toLowerCase() === 'pending') statusColor = '#8a6a30';
         else if (currentStatus.toLowerCase() === 'rejected' || currentStatus.toLowerCase() === 'sold') statusColor = '#a82323';
-
         let actionButtons = '';
         if (isAdmin) {
           if (isVendorProp) {
@@ -1151,7 +1118,6 @@
             <button class="btn danger" onclick="deleteProp('${prop.propertyId}')">Delete</button>
           `;
         }
-
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><b>${prop.propertyId}</b></td>
@@ -1166,7 +1132,6 @@
     })
     .catch(err => console.error(err));
   }
-
   function updatePropStatus(propId, newStatus) {
     const targetUrl = `${SCRIPT_URL}?action=updatePropertyStatus&propertyId=${encodeURIComponent(propId)}&status=${encodeURIComponent(newStatus)}&userId=${encodeURIComponent(currentUser.userId)}&email=${encodeURIComponent(currentUser.email)}`;
     jsonp(targetUrl)
@@ -1181,7 +1146,6 @@
       })
       .catch(err => console.error(err));
   }
-
   document.getElementById('submitPropertyForm').addEventListener('submit', function(e) {
     e.preventDefault();
     if (!currentUser) {
@@ -1189,25 +1153,21 @@
       document.getElementById('registerModal').classList.add('open');
       return;
     }
-
     const desc = document.getElementById('propDescription').value;
     const phoneRegex = /(\+?\d{10,13})|(\b\d{5}[-\s]?\d{5}\b)|(\b\d{3}[-\s]?\d{3}[-\s]?\d{4}\b)/;
     if (phoneRegex.test(desc)) {
       alert('Phone numbers are not allowed in the additional info/description field. Please use the phone number field instead.');
       return;
     }
-
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerText;
     submitBtn.innerText = 'Submitting...';
     submitBtn.disabled = true;
-
     const propTitle = document.getElementById('propTitle').value;
     const propType = document.getElementById('propType').value;
     const propCity = document.getElementById('propLocation').value;
     const propPrice = document.getElementById('propPrice').value;
     const propPhone = document.getElementById('propCountryCode').value + ' ' + document.getElementById('propPhone').value;
-
     submitToAppsScript({
       formType: 'property',
       userId: currentUser.userId,
@@ -1226,12 +1186,10 @@
       document.getElementById('submitPropertyForm').reset();
       loadDashboardProperties();
       refreshPublicData();
-
       const waText = `Hello Admin, a new property has been uploaded by vendor ${currentUser.fullName} (${currentUser.email}) and needs your verification & approval:\n\nTitle: ${propTitle}\nType: ${propType}\nCity: ${propCity}\nPrice: ${propPrice}\nPhone: ${propPhone}`;
       showSuccessModal('Property Submitted Successfully!', 'Your property has been submitted and is currently pending admin approval. Once verified and approved by the admin, it will go live on the website.', waText);
     });
   });
-
   function deleteProp(propId) {
     if (confirm('Are you sure you want to delete this property listing?')) {
       const targetUrl = `${SCRIPT_URL}?action=deleteProperty&propertyId=${encodeURIComponent(propId)}&userId=${encodeURIComponent(currentUser.userId)}&email=${encodeURIComponent(currentUser.email)}`;
