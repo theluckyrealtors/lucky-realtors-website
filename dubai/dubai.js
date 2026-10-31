@@ -30,17 +30,23 @@
     return (cur === 'INR' ? '₹ ' : cur + ' ') + Math.round(v).toLocaleString('en-US') + ' / sq ft';
   }
 
-  mount.innerHTML =
-    '<div class="dubai-panel" id="dubaiPanel" aria-live="polite">' +
-    '<div class="dubai-filters">' +
-    '<div><label for="dbArea">Area</label><select id="dbArea"><option value="">All areas</option></select></div>' +
-    '<div><label for="dbType">Type</label><select id="dbType"><option value="">All types</option><option>Apartment</option><option>Penthouse</option><option>Townhouse</option><option>Villa</option></select></div>' +
+  // Dubai fields live INSIDE the main .filters bar as an extra row (shown only for Dubai)
+  var bar = document.querySelector('.filters');
+  var row = document.createElement('div');
+  row.className = 'dubai-row';
+  row.style.cssText = 'display:none;grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding-top:14px;border-top:1px solid #d6d0c3;';
+  row.innerHTML =
+    '<div><label for="dbArea">Dubai area</label><select id="dbArea"><option value="">All areas</option></select></div>' +
+    '<div><label for="dbType">Dubai type</label><select id="dbType"><option value="">All types</option><option>Apartment</option><option>Penthouse</option><option>Townhouse</option><option>Villa</option></select></div>' +
     '<div><label for="dbBeds">Bedrooms</label><select id="dbBeds"><option value="">Any</option><option value="0">Studio</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4+</option></select></div>' +
     '<div><label for="dbMax">Max budget (AED M)</label><input id="dbMax" type="number" min="0" step="0.1" placeholder="e.g. 3"></div>' +
     '<div><label for="dbSort">Sort</label><select id="dbSort"><option value="">Featured</option><option value="lo">Price: low to high</option><option value="hi">Price: high to low</option><option value="size">Size: large to small</option></select></div>' +
-    '<div><label for="dbCur">Currency</label><select id="dbCur"><option>AED</option><option>USD</option><option>INR</option></select></div>' +
-    '</div>' +
-    '<p class="dubai-note">Showing Dubai listings. Use the main Search button to update results. Prices are indicative and subject to reconfirmation.</p>' +
+    '<div><label for="dbCur">Currency</label><select id="dbCur"><option>AED</option><option>USD</option><option>INR</option></select></div>';
+  (bar || mount).appendChild(row);
+
+  // Results area sits below the filter bar (in the mount point)
+  mount.innerHTML =
+    '<div class="dubai-panel" id="dubaiPanel" style="display:none" aria-live="polite">' +
     '<p class="dubai-count" id="dbCount"></p>' +
     '<div class="dubai-grid" id="dubaiGrid"></div>' +
     '<button type="button" class="btn dark dubai-more" id="dbMore" style="display:none">Show more</button>' +
@@ -137,7 +143,8 @@
 
   function sync() {
     var on = isDubai();
-    panel.classList.toggle('is-open', on);
+    row.style.display = on ? 'grid' : 'none';
+    panel.style.display = on ? 'block' : 'none';
     if (on) load(); else { searched = false; grid.innerHTML = ''; count.textContent = ''; more.style.display = 'none'; }
   }
 
